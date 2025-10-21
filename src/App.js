@@ -10,6 +10,7 @@ import { registerSoundfonts } from '@strudel/soundfonts';
 import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import ToggleButton from './components/ToggleButton';
+import ButtonGroup from './components/ButtonGroup';
 
 let globalEditor = null;
 
@@ -66,6 +67,19 @@ export default function StrudelDemo() {
 
 const hasRun = useRef(false);
 
+// TODO: Fix the handling of onClick events (global variable?)
+let navButtons = [
+    { label: 'Preprocess', onClick: Proc },
+    { label: 'Proc & Play', onClick: (globalEditor) => {
+        if (globalEditor != null) {
+            Proc()
+            globalEditor.evaluate()
+        }
+    }},
+    { label: 'Play', onClick: (globalEditor) => globalEditor.evaluate()},
+    { label: 'Stop', onClick: (globalEditor) => globalEditor.stop()}
+];
+
 useEffect(() => {
 
     if (!hasRun.current) {
@@ -119,6 +133,10 @@ return (
                         <textarea className="form-control" rows="15" id="proc" ></textarea>
                     </div>
                     <div className="col-md-4">
+
+                        <ButtonGroup
+                            buttons={navButtons}
+                        />
 
                         <nav>
                             <button id="process" className="btn btn-outline-primary">Preprocess</button>
