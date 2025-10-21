@@ -1,26 +1,28 @@
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 
-export default function ToggleButton({ bsPrefix = 'form-check', label = '', defaultChecked = false, onChange = () => {}}) {
-
-    const [checked, setChecked] = useState(defaultChecked)
-
-    const toggleCheck = (event) => {
-        let isChecked = event.target.checked;
-        setChecked(isChecked);
-
-        if (onChange) {
-            onChange(event);
-        }
-    }
+/**
+ * Intended to be used as inner element of checkbox and radio button groups.
+ * @param {*} props 
+ * @returns 
+ */
+export default function ToggleButton({ bsPrefix = 'btn-check', buttonStyle = 'btn-outline-primary', checked = false, id = '', value = '', label = '', onChange = () => {}}) {
 
     return (
-        <Form.Check
-            bsPrefix={bsPrefix}
-            type='checkbox'
-            checked={checked}
-            label={label}
-            onChange={toggleCheck}
-        />
+        <>
+            <input
+                className={bsPrefix}
+                id={id}
+                type={'radio'}
+                value={value}
+                autoComplete='off'
+                checked={checked}
+                onChange={onChange}
+                name={'btnradio'}
+            />
+            <label className={`btn ${buttonStyle}`} htmlFor={id}>
+                {label}
+            </label>
+        </>
     )
 }

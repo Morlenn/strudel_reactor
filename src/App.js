@@ -9,8 +9,9 @@ import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/w
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
-import ToggleButton from './components/ToggleButton';
+import CheckBox from './components/CheckBox';
 import ButtonGroup from './components/ButtonGroup';
+import ToggleGroup from './components/ToggleGroup';
 import Slider from './components/Slider';
 import TextArea from './components/TextArea'
 
@@ -113,10 +114,22 @@ export default function StrudelDemo() {
                     </div>
                     <div className="row">
                         {/* TODO: Update toggles to hush music */}
-                        <ToggleButton
-                            label = 'p1'
+                        <div className='mb-3'>
+                            <CheckBox
+                                label = 'p1'
+                            />
+                        </div>
+                        <div className='mb-3'>
+                            <Slider label='Test Slider'/>
+                        </div>
+                        <ToggleGroup
+                            label='Test Toggle'
+                            buttons={[
+                                { bsPrefix: 'btn-check', label: '1' },
+                                { bsPrefix: 'btn-check', label: '2' },
+                                { bsPrefix: 'btn-check', label: '3' }
+                            ]}
                         />
-                        <Slider label='Test Slider'/>
                     </div>
                 </div>
                 <canvas id="roll"></canvas>
