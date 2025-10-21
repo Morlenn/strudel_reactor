@@ -9,6 +9,7 @@ import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/w
 import { registerSoundfonts } from '@strudel/soundfonts';
 import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
+import ToggleButton from './components/ToggleButton';
 
 let globalEditor = null;
 
@@ -54,9 +55,9 @@ export function Proc() {
 export function ProcessText(match, ...args) {
 
     let replace = ""
-    if (document.getElementById('flexRadioDefault2').checked) {
-        replace = "_"
-    }
+    // if (document.getElementById('flexRadioDefault2').checked) {
+    //     replace = "_"
+    // }
 
     return replace
 }
@@ -134,7 +135,11 @@ return (
                         <div id="output" />
                     </div>
                     <div className="col-md-4">
-                        <div className="form-check">
+                        {/* TODO: Update toggles to hush music */}
+                        <ToggleButton
+                            label = 'p1'
+                        />
+                        {/* <div className="form-check">
                             <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onChange={ProcAndPlay} defaultChecked />
                             <label className="form-check-label" htmlFor="flexRadioDefault1">
                                 p1: ON
@@ -145,7 +150,7 @@ return (
                             <label className="form-check-label" htmlFor="flexRadioDefault2">
                                 p1: HUSH
                             </label>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
