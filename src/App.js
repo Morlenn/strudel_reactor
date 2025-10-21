@@ -11,6 +11,7 @@ import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import ToggleButton from './components/ToggleButton';
 import ButtonGroup from './components/ButtonGroup';
+import Slider from './components/Slider';
 import TextArea from './components/TextArea'
 
 const handleD3Data = (event) => {
@@ -115,6 +116,7 @@ export default function StrudelDemo() {
                         <ToggleButton
                             label = 'p1'
                         />
+                        <Slider label='Test Slider'/>
                     </div>
                 </div>
                 <canvas id="roll"></canvas>
