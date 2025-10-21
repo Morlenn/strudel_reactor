@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+textarea.text-processing {
+  min-height: 45vh !important;
+}

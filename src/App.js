@@ -11,6 +11,7 @@ import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import ToggleButton from './components/ToggleButton';
 import ButtonGroup from './components/ButtonGroup';
+import TextArea from './components/TextArea'
 
 const handleD3Data = (event) => {
     console.log(event.detail);
@@ -18,64 +19,50 @@ const handleD3Data = (event) => {
 
 export default function StrudelDemo() {
 
-let globalEditor = useRef(null);
-const hasRun = useRef(false);
+    const globalEditor = useRef(null);
+    const hasRun = useRef(false);
 
-const Play = () => {
-    if (globalEditor.current) {
-        globalEditor.current.evaluate();
+    const play = () => {
+        if (globalEditor.current) {
+            globalEditor.current.evaluate();
+        }
     }
-}
 
-const Stop = () => {
-    if (globalEditor.current) {
-        globalEditor.current.stop();
+    const stop = () => {
+        if (globalEditor.current) {
+            globalEditor.current.stop();
+        }
     }
-}
 
-// TODO: Get this to work when buttons added.
-const ProcAndPlay = () => {
-    if (globalEditor.current != null && globalEditor.current.repl.state.started == true) {
-        console.log(globalEditor.current)
-        Proc()
-        globalEditor.current.evaluate();
+    const save = () => {
+        if (globalEditor.current) {
+            // TODO: Save/load functionality
+            console.log(globalEditor.current.code);
+        }
     }
-}
 
-// TODO: Get this to work when buttons added.
-const Proc = () => {
+    const load = () => {
+        if (globalEditor.current) {
+            // TODO: Save/load functionality
+        }
+    }
 
-    let proc_text = document.getElementById('proc').value
-    let proc_text_replaced = proc_text.replaceAll('<p1_Radio>', ProcessText);
-    ProcessText(proc_text);
-    globalEditor.current.setCode(proc_text_replaced)
-}
+    let navButtons = [
+        // { label: 'Preprocess', onClick: Proc },
+        // { label: 'Proc & Play', onClick: ProcAndPlay},
+        { label: 'Play', onClick: play},
+        { label: 'Stop', onClick: stop},
+        { label: 'Save', onClick: save},
+        { label: 'Load', onClick: load}
+    ];
 
-// TODO: Get this to work when buttons added.
-const ProcessText = (match, ...args) => {
+    useEffect(() => {
 
-    let replace = ""
-    // if (document.getElementById('flexRadioDefault2').checked) {
-    //     replace = "_"
-    // }
-
-    return replace
-}
-
-let navButtons = [
-    { label: 'Preprocess', onClick: Proc },
-    { label: 'Proc & Play', onClick: ProcAndPlay},
-    { label: 'Play', onClick: Play},
-    { label: 'Stop', onClick: Stop}
-];
-
-useEffect(() => {
-
-    if (!hasRun.current) {
-        document.addEventListener("d3Data", handleD3Data);
-        console_monkey_patch();
-        hasRun.current = true;
-        //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
+        if (!hasRun.current) {
+            document.addEventListener("d3Data", handleD3Data);
+            console_monkey_patch();
+            hasRun.current = true;
+            //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
             //init canvas
             const canvas = document.getElementById('roll');
             canvas.width = canvas.width * 2;
@@ -87,6 +74,8 @@ useEffect(() => {
                 getTime: () => getAudioContext().currentTime,
                 transpiler,
                 root: document.getElementById('editor'),
+                // TODO: Change tune by selection.
+                initialCode: stranger_tune,
                 drawTime,
                 onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
                 prebake: async () => {
@@ -101,86 +90,35 @@ useEffect(() => {
                     await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
                 },
             });
-            
-        document.getElementById('proc').value = stranger_tune
-        // SetupButtons()
-        Proc()
-    }
+        }
 
-}, []);
+    }, []);
 
-// const SetupButtons = () => {
-
-//     document.getElementById('play').addEventListener('click', () => globalEditor.evaluate());
-//     document.getElementById('stop').addEventListener('click', () => globalEditor.stop());
-//     document.getElementById('process').addEventListener('click', () => {
-//         Proc()
-//     }
-//     )
-//     document.getElementById('process_play').addEventListener('click', () => {
-//         if (globalEditor != null) {
-//             Proc()
-//             globalEditor.evaluate()
-//         }
-//     }
-//     )
-// }
-
-return (
-    <div>
-        <h2>Strudel Demo</h2>
-        <main>
-
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <label htmlFor="exampleFormControlTextarea1" className="form-label">Text to preprocess:</label>
-                        <textarea className="form-control" rows="15" id="proc" ></textarea>
+    return (
+        <div>
+            <h2>Strudel Demo</h2>
+            <main>
+                <div className="container-fluid">
+                    <div className="row">
+                        <div className="col-12" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                            <div id="editor" />
+                            {/* <div id="output" /> */}
+                        </div>
+                        <div className="col text-center">
+                            <ButtonGroup
+                                buttons={navButtons}
+                            />
+                        </div>
                     </div>
-                    <div className="col-md-4">
-
-                        <ButtonGroup
-                            buttons={navButtons}
-                        />
-
-                        {/* <nav>
-                            <button id="process" className="btn btn-outline-primary">Preprocess</button>
-                            <button id="process_play" className="btn btn-outline-primary">Proc & Play</button>
-                            <br />
-                            <button id="play" className="btn btn-outline-primary">Play</button>
-                            <button id="stop" className="btn btn-outline-primary">Stop</button>
-                        </nav> */}
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-8" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                        <div id="editor" />
-                        <div id="output" />
-                    </div>
-                    <div className="col-md-4">
+                    <div className="row">
                         {/* TODO: Update toggles to hush music */}
                         <ToggleButton
                             label = 'p1'
                         />
-                        {/* <div className="form-check">
-                            <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" onChange={ProcAndPlay} defaultChecked />
-                            <label className="form-check-label" htmlFor="flexRadioDefault1">
-                                p1: ON
-                            </label>
-                        </div>
-                        <div className="form-check">
-                            <input className="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" onChange={ProcAndPlay} />
-                            <label className="form-check-label" htmlFor="flexRadioDefault2">
-                                p1: HUSH
-                            </label>
-                        </div> */}
                     </div>
                 </div>
-            </div>
-            <canvas id="roll"></canvas>
-        </main >
-    </div >
-);
-
-
+                <canvas id="roll"></canvas>
+            </main >
+        </div >
+    );
 }
