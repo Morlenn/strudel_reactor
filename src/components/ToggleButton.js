@@ -1,43 +1,25 @@
 import Form from 'react-bootstrap/Form';
-import { Component } from 'react';
+import { useState } from 'react';
 
-export default class ToggleButton extends Component {
+export default function ToggleButton({ label = '', defaultChecked = false, onChange = () => {}}) {
 
-    constructor(props) {
-        super(props);
+    const [checked, setChecked] = useState(defaultChecked)
 
-        this.props.defaultChecked ??= false;
-        this.props.label ??= '';
-        this.props.onChange ??= () => {};
-
-        this.state = {
-            checked: this.props.defaultChecked
-        }
-    }
-
-    toggleCheck = (event) => {
+    const toggleCheck = (event) => {
         let isChecked = event.target.checked;
-        this.setState({ checked: isChecked });
+        setChecked(isChecked);
 
-        if (this.props.onChange) {
-            this.onChange(event);
+        if (onChange) {
+            onChange(event);
         }
     }
 
-    render() {
-        return (
-            <Form.Check
-                type='checkbox'
-                checked={this.state.checked}
-                label={this.props.label}
-                onChange={this.toggleCheck}
-            />
-        );
-    }
+    return (
+        <Form.Check
+            type='checkbox'
+            checked={checked}
+            label={label}
+            onChange={toggleCheck}
+        />
+    )
 }
-
-ToggleButton.defaultProps = {
-    label: '',
-    defaultChecked: false,
-    onChange: () => {}
-};
