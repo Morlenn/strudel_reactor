@@ -10,7 +10,7 @@ export default function CheckBox({ bsPrefix = 'form-check', id = '', type = 'che
         setChecked(isChecked);
 
         if (onChange) {
-            onChange(event);
+            onChange(isChecked);
         }
     }
 

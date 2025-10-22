@@ -18,7 +18,7 @@ export default function ToggleButton({ bsPrefix = 'btn-check', buttonStyle = 'bt
                 autoComplete='off'
                 checked={checked}
                 onChange={onChange}
-                name={'btnradio'}
+                name={`btnradio-${id}`}
             />
             <label className={`btn ${buttonStyle}`} htmlFor={id}>
                 {label}

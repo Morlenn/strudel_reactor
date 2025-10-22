@@ -3,12 +3,13 @@ import Form from 'react-bootstrap/Form';
 import ToggleButton from './ToggleButton';
 import { useState, useId } from 'react';
 
-export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = [], label = ''}) {
+export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = [], label = '', onChange = () => {}}) {
     const id = useId();
     const [selected, setSelected] = useState('0');
 
     const toggleSelected = (value) => {
         setSelected(value);
+        onChange()
     }
 
     // useEffect(() => {

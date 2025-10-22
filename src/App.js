@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
 import { evalScope } from '@strudel/core';
 import { drawPianoroll } from '@strudel/draw';
@@ -7,13 +7,14 @@ import { initAudioOnFirstClick } from '@strudel/webaudio';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
+import Song from './Song';
 import { stranger_tune } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import CheckBox from './components/CheckBox';
 import ButtonGroup from './components/ButtonGroup';
 import ToggleGroup from './components/ToggleGroup';
 import Slider from './components/Slider';
-import TextArea from './components/TextArea'
+import PostRenderElements from './components/PostRenderElements';
 
 const handleD3Data = (event) => {
     console.log(event.detail);
@@ -21,8 +22,10 @@ const handleD3Data = (event) => {
 
 export default function StrudelDemo() {
 
+    const [soundElements, setSoundElements] = useState([]);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
+    let track;
 
     const play = () => {
         if (globalEditor.current) {
@@ -38,8 +41,7 @@ export default function StrudelDemo() {
 
     const save = () => {
         if (globalEditor.current) {
-            // TODO: Save/load functionality
-            console.log(globalEditor.current.code);
+            new Song({code: globalEditor.current.code})
         }
     }
 
@@ -92,6 +94,30 @@ export default function StrudelDemo() {
                     await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
                 },
             });
+
+            // Set track for strudel code processing.
+            track = new Song({code: globalEditor.current.code, repl: globalEditor.current.repl})
+            // Set sound toggles.
+            setSoundElements(track.sounds.map((sound) => {
+                console.log(sound)
+                    return <CheckBox
+                                label = {sound.label}
+                                defaultChecked = {true}
+                                onChange={(isChecked) => {
+                                    if (isChecked) {
+                                        // Remove underscore.
+                                        globalEditor.current.code = globalEditor.current.code.replace(`_${sound.label}:`, `${sound.label}:`)
+
+                                    } else {
+                                        // Add underscore.
+                                        globalEditor.current.code = globalEditor.current.code.replace(`${sound.label}:`, `_${sound.label}:`)
+                                    }
+                                    globalEditor.current.evaluate();
+                                    console.log(globalEditor.current.code)
+                                }}
+                            />
+            }));
+
         }
 
     }, []);
@@ -113,23 +139,32 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                     <div className="row">
-                        {/* TODO: Update toggles to hush music */}
-                        <div className='mb-3'>
-                            <CheckBox
-                                label = 'p1'
-                            />
+                        <div className='sound-container'>
+                            {/* Sound buttons to be added post render */}
+                            <PostRenderElements newElements={soundElements}/>
                         </div>
                         <div className='mb-3'>
                             <Slider label='Test Slider'/>
                         </div>
-                        <ToggleGroup
-                            label='Test Toggle'
-                            buttons={[
-                                { bsPrefix: 'btn-check', label: '1' },
-                                { bsPrefix: 'btn-check', label: '2' },
-                                { bsPrefix: 'btn-check', label: '3' }
-                            ]}
-                        />
+                        <div className='mb-3'>
+                            <ToggleGroup
+                                label='Pattern Toggle'
+                                buttons={[
+                                    { bsPrefix: 'btn-check', label: '1' },
+                                    { bsPrefix: 'btn-check', label: '2' },
+                                    { bsPrefix: 'btn-check', label: '3' }
+                                ]}
+                            />
+                        </div>
+                        <div className='mb-3'>
+                            <ToggleGroup
+                                label='Bass Toggle'
+                                buttons={[
+                                    { bsPrefix: 'btn-check', label: '1' },
+                                    { bsPrefix: 'btn-check', label: '2' },
+                                ]}
+                            />
+                        </div>
                     </div>
                 </div>
                 <canvas id="roll"></canvas>
