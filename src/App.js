@@ -23,6 +23,7 @@ const handleD3Data = (event) => {
 export default function StrudelDemo() {
 
     const [soundElements, setSoundElements] = useState([]);
+    const [codeUpdated, setCodeUpdated] = useState(false);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
     let track;
@@ -30,6 +31,13 @@ export default function StrudelDemo() {
     const play = () => {
         if (globalEditor.current) {
             globalEditor.current.evaluate();
+        }
+    }
+
+    const refresh = () => {
+        if (globalEditor.current && codeUpdated) {
+            globalEditor.current.evaluate();
+            setCodeUpdated(false);
         }
     }
 
@@ -51,10 +59,18 @@ export default function StrudelDemo() {
         }
     }
 
+    const updateCode = (updatedCode) => {
+        if (updatedCode) { 
+            globalEditor.current.setCode(updatedCode);
+            setCodeUpdated(true);
+        }
+    }
+
     let navButtons = [
         // { label: 'Preprocess', onClick: Proc },
         // { label: 'Proc & Play', onClick: ProcAndPlay},
         { label: 'Play', onClick: play},
+        { label: 'Refresh', onClick: refresh, disabled: !codeUpdated},
         { label: 'Stop', onClick: stop},
         { label: 'Save', onClick: save},
         { label: 'Load', onClick: load}
@@ -106,14 +122,13 @@ export default function StrudelDemo() {
                                 onChange={(isChecked) => {
                                     if (isChecked) {
                                         // Remove underscore.
-                                        globalEditor.current.code = globalEditor.current.code.replace(`_${sound.label}:`, `${sound.label}:`)
+                                        updateCode(globalEditor.current.code.replace(`_${sound.label}:`, `${sound.label}:`));
 
                                     } else {
                                         // Add underscore.
-                                        globalEditor.current.code = globalEditor.current.code.replace(`${sound.label}:`, `_${sound.label}:`)
+                                        updateCode(globalEditor.current.code.replace(`${sound.label}:`, `_${sound.label}:`));
                                     }
-                                    globalEditor.current.evaluate();
-                                    console.log(globalEditor.current.code)
+                                    // globalEditor.current.evaluate();
                                 }}
                             />
             }));
