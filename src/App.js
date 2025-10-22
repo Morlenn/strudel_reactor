@@ -23,6 +23,7 @@ const handleD3Data = (event) => {
 export default function StrudelDemo() {
 
     const [soundElements, setSoundElements] = useState([]);
+    const [soundToggles, setSoundToggles] = useState([]);
     const [codeUpdated, setCodeUpdated] = useState(false);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
@@ -115,7 +116,6 @@ export default function StrudelDemo() {
             track = new Song({code: globalEditor.current.code, repl: globalEditor.current.repl})
             // Set sound toggles.
             setSoundElements(track.sounds.map((sound) => {
-                console.log(sound)
                     return <CheckBox
                                 label = {sound.label}
                                 defaultChecked = {true}
@@ -132,6 +132,19 @@ export default function StrudelDemo() {
                                 }}
                             />
             }));
+            setSoundToggles(track.variables.map((variable) => {
+                let buttons = [];
+                for (let i = 0; i < variable.length; i++) {
+                    buttons.push({ bsPrefix: 'btn-check', label: `${i+1}` })
+                }
+                return <ToggleGroup
+                                label={variable.label}
+                                buttons={buttons}
+                                onChange={(value) => {
+                                    updateCode(globalEditor.current.code.slice(0, variable.start) + value + globalEditor.current.code.slice(variable.end));
+                                }}
+                            />
+            }))
 
         }
 
@@ -161,24 +174,9 @@ export default function StrudelDemo() {
                         <div className='mb-3'>
                             <Slider label='Test Slider'/>
                         </div>
-                        <div className='mb-3'>
-                            <ToggleGroup
-                                label='Pattern Toggle'
-                                buttons={[
-                                    { bsPrefix: 'btn-check', label: '1' },
-                                    { bsPrefix: 'btn-check', label: '2' },
-                                    { bsPrefix: 'btn-check', label: '3' }
-                                ]}
-                            />
-                        </div>
-                        <div className='mb-3'>
-                            <ToggleGroup
-                                label='Bass Toggle'
-                                buttons={[
-                                    { bsPrefix: 'btn-check', label: '1' },
-                                    { bsPrefix: 'btn-check', label: '2' },
-                                ]}
-                            />
+                        <div className='toggle-container'>
+                            {/* Variable toggles to be added post render */}
+                            <PostRenderElements newElements={soundToggles}/>
                         </div>
                     </div>
                 </div>
