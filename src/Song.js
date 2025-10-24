@@ -18,6 +18,16 @@ export default class Song {
         this.ProcessInputString(props.code)
     }
 
+    static preProcessString(input) {
+        console.log('outside')
+        if (input.match(/gain\(\d.*\)/))
+        if (!input.match(/all\([\s\S]*.gain\(\d.*\)/)) {
+            console.log('inside')
+            input = input.concat('\n//all(x => x.gain(1))');
+        }
+        return input;
+    }
+
     ProcessInputString(input) {
         // Code 'insperation' gained from: https://codeberg.org/uzu/strudel/src/branch/main/packages/transpiler/transpiler.mjs
         const ast = parse(input, {

@@ -1,6 +1,6 @@
 import BSButtonGroup from 'react-bootstrap/ButtonGroup'
 import Form from 'react-bootstrap/Form';
-import ToggleButton from './ToggleButton';
+import ToggleButton from './RadioButton';
 import { useState, useId } from 'react';
 
 export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = [], label = '', onChange = () => {}}) {
@@ -9,7 +9,7 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
 
     const toggleSelected = (value) => {
         setSelected(value);
-        onChange(value)
+        onChange(value);
     };
 
     return (

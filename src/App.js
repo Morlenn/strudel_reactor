@@ -63,6 +63,7 @@ export default function StrudelDemo() {
     }
 
     const updateCode = (updatedCode) => {
+        updatedCode = Song.preProcessString(updatedCode);
         if (updatedCode) { 
             globalEditor.current.setCode(updatedCode);
             setCodeUpdated(true);
@@ -82,6 +83,8 @@ export default function StrudelDemo() {
     useEffect(() => {
 
         if (!hasRun.current) {
+            let inputCode = Song.preProcessString(stranger_tune);
+
             document.addEventListener("d3Data", handleD3Data);
             console_monkey_patch();
             hasRun.current = true;
@@ -98,7 +101,7 @@ export default function StrudelDemo() {
                 transpiler,
                 root: document.getElementById('editor'),
                 // TODO: Change tune by selection.
-                initialCode: stranger_tune,
+                initialCode: inputCode,
                 drawTime,
                 onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
                 prebake: async () => {
@@ -122,7 +125,6 @@ export default function StrudelDemo() {
                     value: control.value,
                     label: control.label,
                     onChange: (currentValue, newValue) => {
-                        console.log(currentValue, newValue)
                         updateCode(globalEditor.current.code.replace(`${control.label}(${currentValue})`, `${control.label}(${newValue})`));
                     }
                 };
@@ -189,7 +191,32 @@ export default function StrudelDemo() {
                             <PostRenderElements newElements={soundElements}/>
                         </div>
                         <div className='mb-3'>
-                            <Slider label='Test Slider'/>
+                            <Slider 
+                            label='Gain'
+                            disabled={true}
+                            toggle={{
+                                label: 'Gain Toggle',
+                                onChange: () => {
+                                    // Pattern matches global gain control.
+                                    let gainRegex = 'all\\(x => x\\.gain\\([0-9]*[.]?[0-9]+\\)\\)';
+                                    let match = globalEditor.current.code.match(`//${gainRegex}`);
+
+                                    // Disabled code.
+                                    if (match) {
+                                        updateCode(globalEditor.current.code.replace(match[0], `${match[0].slice(2)}`)); 
+                                    } else {
+                                        // Enable code.
+                                        let match = globalEditor.current.code.match(gainRegex);
+                                        if (match) {
+                                           updateCode(globalEditor.current.code.replace(match[0], `//${match[0]}`)); 
+                                        }
+                                    }
+                                }
+                            }}
+                            onChange={(oldValue, newValue) => {
+                                updateCode(globalEditor.current.code.replace(`all(x => x.gain(${oldValue}))`, `all(x => x.gain(${newValue}))`));
+                            }}
+                            />
                         </div>
                         <div className='toggle-container'>
                             {/* Variable toggles to be added post render */}
