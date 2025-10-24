@@ -8,7 +8,8 @@ export default class Song {
     bass = '0';
     sounds = [];
     variables = [];
-    controls = {};
+    controls = [];
+    trackedExpressions = [ 'setcps', 'setcpm' ];
 
     constructor(props) {
         this.repl = props.repl;
@@ -27,8 +28,15 @@ export default class Song {
         let variableLookup = [];
         ast.body.forEach((node) => {
             // Process controls such as: setcps, gain
-            if (node.type === 'ExpressionStatement' && node.expression.callee.name !== 'samples' ) {
-                // console.log(node)
+            if (node.type === 'ExpressionStatement') {
+                let callName = node.expression.callee.name;
+                if (this.trackedExpressions.includes(callName)) {
+                    let fullMatchedString = this.code.slice(node.start, node.end)
+                    let controlValue = (fullMatchedString) ? this.code.match('\\((.*)\\)') : '';
+                    if (controlValue) {
+                        this.controls.push({ label: callName, start: node.start, end: node.end, value: controlValue[1] })
+                    }
+                }
             }
             // Labeled sounds.
             if (node.type === 'LabeledStatement') {

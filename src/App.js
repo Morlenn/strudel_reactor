@@ -8,11 +8,12 @@ import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
 import Song from './Song';
-import { stranger_tune } from './tunes';
+import { stranger_tune, bergheini, finance, euclid } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import CheckBox from './components/CheckBox';
 import ButtonGroup from './components/ButtonGroup';
 import ToggleGroup from './components/ToggleGroup';
+import InputGroup from './components/InputGroup';
 import Slider from './components/Slider';
 import PostRenderElements from './components/PostRenderElements';
 
@@ -22,6 +23,7 @@ const handleD3Data = (event) => {
 
 export default function StrudelDemo() {
 
+    const [controlElements, setControlElements] = useState([]);
     const [soundElements, setSoundElements] = useState([]);
     const [soundToggles, setSoundToggles] = useState([]);
     const [codeUpdated, setCodeUpdated] = useState(false);
@@ -114,6 +116,18 @@ export default function StrudelDemo() {
 
             // Set track for strudel code processing.
             track = new Song({code: globalEditor.current.code, repl: globalEditor.current.repl})
+            let newInputs = track.controls.map((control) => {
+                // Create new object from control to input props.
+                return {
+                    value: control.value,
+                    label: control.label,
+                    onChange: (currentValue, newValue) => {
+                        console.log(currentValue, newValue)
+                        updateCode(globalEditor.current.code.replace(`${control.label}(${currentValue})`, `${control.label}(${newValue})`));
+                    }
+                };
+            })
+            setControlElements([<InputGroup inputs={newInputs}/>])  ;    
             // Set sound toggles.
             setSoundElements(track.sounds.map((sound) => {
                     return <CheckBox
@@ -145,7 +159,6 @@ export default function StrudelDemo() {
                                 }}
                             />
             }))
-
         }
 
     }, []);
@@ -167,6 +180,10 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                     <div className="row">
+                        <div className='controls-container'>
+                            {/* Inputs to be added post render */}
+                            <PostRenderElements newElements={controlElements}/>
+                        </div>
                         <div className='sound-container'>
                             {/* Sound buttons to be added post render */}
                             <PostRenderElements newElements={soundElements}/>

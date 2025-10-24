@@ -10,13 +10,7 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
     const toggleSelected = (value) => {
         setSelected(value);
         onChange(value)
-    }
-
-    // useEffect(() => {
-    //     if (buttons.length) {
-    //         setSelected(0);
-    //     }
-    // })
+    };
 
     return (
         <>
