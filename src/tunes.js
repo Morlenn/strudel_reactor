@@ -100,6 +100,9 @@ stack(
 // @version 1.2`;
 
 const bergheini = `// "Bergheini auf dem Weg nach Hause" @by $$$otter
+samples('https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/strudel.json')
+samples('https://raw.githubusercontent.com/Mittans/tidal-drum-machines/main/machines/tidal-drum-machines.json')
+
 setcps(2.5)
 
 $: s("bd*4").struct("<[x ~ x x]!32 x x>")
@@ -173,16 +176,18 @@ setcpm(30)
 samples({
   finance:  ['man-in-finance/finance_00.wav', 'man-in-finance/finance_01.wav', 'man-in-finance/finance_02.wav', 'man-in-finance/murrayhill.wav']
 }, 'github:sandpills/v10101a-samples/main/');
+samples('https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/strudel.json')
+samples('https://raw.githubusercontent.com/Mittans/tidal-drum-machines/main/machines/tidal-drum-machines.json')
 
 
-$: n("<1 0>").s("finance").slow(2).clip(1)
+Finance1: n("<1 0>").s("finance").slow(2).clip(1)
   .mask("<1 1 1 0>/4")
 
-$: n("0").s("finance").slow(2).clip(1.4)
+Finance2: n("0").s("finance").slow(2).clip(1.4)
   .struct("1(<3 5>,8)")
   .mask("<0 0 0 1>/4").gain(0.8).room(1.2)
 
-$: note("<a1 c2>/2")
+Supersaw: note("<a1 c2>/2")
 .sound("supersaw")
 .euclidLegato(9,16)
 .ftype('24db')
@@ -194,7 +199,7 @@ $: note("<a1 c2>/2")
 .add(note("<[0 5]*4 [5 10]*4>"))
 // .hush()
 
-$: s("oh*16")
+Drum1: s("oh*16")
   .bank("RolandTR909")
   .decay(sine.range(.2,.4))
   .dist("1:.3")
@@ -206,7 +211,7 @@ $: s("oh*16")
   .mask("<0 1>/8")
   // .hush()
 
-$: s("bd*4").bank('RolandTR909').dist("1:1")
+Drum2: s("bd*4").bank('RolandTR909').dist("1:1")
 
 .scope()
 // @version 1.1`;
@@ -214,6 +219,8 @@ $: s("bd*4").bank('RolandTR909').dist("1:1")
 const euclid = `//"Euclid test" @by shadesDrawn
 
 setcpm(30)
+samples('https://raw.githubusercontent.com/tidalcycles/Dirt-Samples/master/strudel.json')
+samples('https://raw.githubusercontent.com/Mittans/tidal-drum-machines/main/machines/tidal-drum-machines.json')
 
 synth:("<[c2,c1] [ab0,ab1] [f0,f1] [g0,g1]>")
   .euclidRot(3,16,14)
