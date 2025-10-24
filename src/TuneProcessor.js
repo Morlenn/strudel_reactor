@@ -56,12 +56,10 @@ export default class TuneProcessor {
             return {
                 label: variable.label,
                 buttons: buttons,
-                onChange: (value) => {
-                    this.updateCode(this.globalEditor.code.slice(0, variable.start) + value + this.globalEditor.code.slice(variable.end));
-                }
+                start: variable.start,
+                end: variable.end
             };
         });
-        console.log(controlDeckConfig)
         return controlDeckConfig;
     }
 

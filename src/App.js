@@ -23,16 +23,10 @@ const handleD3Data = (event) => {
 };
 
 export default function StrudelDemo() {
-
-    // const [controlElements, setControlElements] = useState([]);
-    // const [soundElements, setSoundElements] = useState([]);
-    // const [soundToggles, setSoundToggles] = useState([]);
     
     const [codeUpdated, setCodeUpdated] = useState(false);
-    // const [controlElement, setControlElement] = useState(undefined);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
-    let track;
 
     const play = () => {
         if (globalEditor.current) {
@@ -55,7 +49,7 @@ export default function StrudelDemo() {
 
     const save = () => {
         if (globalEditor.current) {
-            new TuneProcessor({code: globalEditor.current.code})
+            // TODO: Save/load functionality
         }
     }
 
@@ -82,8 +76,6 @@ export default function StrudelDemo() {
     });
 
     let navButtons = [
-        // { label: 'Preprocess', onClick: Proc },
-        // { label: 'Proc & Play', onClick: ProcAndPlay},
         { label: 'Play', onClick: play},
         { label: 'Refresh', onClick: refresh, disabled: !codeUpdated},
         { label: 'Stop', onClick: stop},
@@ -128,54 +120,8 @@ export default function StrudelDemo() {
                 },
             });
 
-            // Set track for strudel code processing.
-            // track = new TuneProcessor({code: globalEditor.current.code, globalEditor: globalEditor.current, updateCode: updateCode})
             TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
-            // let newConfig = TuneProcessor.createControlDeckConfig();
-            // console.log(newConfig)
             setControlConfig(TuneProcessor.createControlDeckConfig());
-            // let newInputs = track.controls.map((control) => {
-            //     // Create new object from control to input props.
-            //     return {
-            //         value: control.value,
-            //         label: control.label,
-            //         onChange: (currentValue, newValue) => {
-            //             updateCode(globalEditor.current.code.replace(`${control.label}(${currentValue})`, `${control.label}(${newValue})`));
-            //         }
-            //     };
-            // })
-            // setControlElements([<InputGroup inputs={newInputs}/>])  ;    
-            // Set sound toggles.
-            // setSoundElements(track.sounds.map((sound) => {
-            //         return <CheckBox
-            //                     label = {sound.label}
-            //                     defaultChecked = {true}
-            //                     onChange={(isChecked) => {
-            //                         if (isChecked) {
-            //                             // Remove underscore.
-            //                             updateCode(globalEditor.current.code.replace(`_${sound.label}:`, `${sound.label}:`));
-
-            //                         } else {
-            //                             // Add underscore.
-            //                             updateCode(globalEditor.current.code.replace(`${sound.label}:`, `_${sound.label}:`));
-            //                         }
-            //                         // globalEditor.current.evaluate();
-            //                     }}
-            //                 />
-            // }));
-            // setSoundToggles(track.variables.map((variable) => {
-            //     let buttons = [];
-            //     for (let i = 0; i < variable.length; i++) {
-            //         buttons.push({ bsPrefix: 'btn-check', label: `${i+1}` })
-            //     }
-            //     return <ToggleGroup
-            //                     label={variable.label}
-            //                     buttons={buttons}
-            //                     onChange={(value) => {
-            //                         updateCode(globalEditor.current.code.slice(0, variable.start) + value + globalEditor.current.code.slice(variable.end));
-            //                     }}
-            //                 />
-            // }))
         }
 
     }, []);
@@ -198,46 +144,6 @@ export default function StrudelDemo() {
                     </div>
                     <div className="row">
                         <ControlDeck config={controlConfig}/>
-                        {/* <div className='controls-container'> */}
-                            {/* Inputs to be added post render */}
-                            {/* <PostRenderElements newElements={controlElements}/> */}
-                        {/* </div> */}
-                        {/* <div className='sound-container'> */}
-                            {/* Sound buttons to be added post render */}
-                            {/* <PostRenderElements newElements={soundElements}/> */}
-                        {/* </div> */}
-                        {/* <div className='mb-3'> */}
-                            {/* <Slider 
-                            label='Gain'
-                            disabled={true}
-                            toggle={{
-                                label: 'Gain Toggle',
-                                onChange: () => {
-                                    // Pattern matches global gain control.
-                                    let gainRegex = 'all\\(x => x\\.gain\\([0-9]*[.]?[0-9]+\\)\\)';
-                                    let match = globalEditor.current.code.match(`//${gainRegex}`);
-
-                                    // Disabled code.
-                                    if (match) {
-                                        updateCode(globalEditor.current.code.replace(match[0], `${match[0].slice(2)}`)); 
-                                    } else {
-                                        // Enable code.
-                                        let match = globalEditor.current.code.match(gainRegex);
-                                        if (match) {
-                                           updateCode(globalEditor.current.code.replace(match[0], `//${match[0]}`)); 
-                                        }
-                                    }
-                                }
-                            }}
-                            onChange={(oldValue, newValue) => {
-                                updateCode(globalEditor.current.code.replace(`all(x => x.gain(${oldValue}))`, `all(x => x.gain(${newValue}))`));
-                            }}
-                            /> */}
-                        {/* </div> */}
-                        {/* <div className='toggle-container'> */}
-                            {/* Variable toggles to be added post render */}
-                            {/* <PostRenderElements newElements={soundToggles}/> */}
-                        {/* </div> */}
                     </div>
                 </div>
                 <canvas id="roll"></canvas>
