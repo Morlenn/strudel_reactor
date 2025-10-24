@@ -30,6 +30,8 @@ export default function StrudelDemo() {
 
     const play = () => {
         if (globalEditor.current) {
+            // Turn off refresh flag if required.
+            if (codeUpdated) { setCodeUpdated(false); }
             globalEditor.current.evaluate();
         }
     }
