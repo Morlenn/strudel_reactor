@@ -1,26 +1,27 @@
-import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
+import BSToggleButton from 'react-bootstrap/ToggleButton';
+import { useState } from 'react'
 
-export default function ToggleButton({ bsPrefix = 'form-check', label = '', defaultChecked = false, onChange = () => {}}) {
-
-    const [checked, setChecked] = useState(defaultChecked)
+export default function ToggleButton({ defaultChecked = false, bsPrefix = `btn${ defaultChecked ? ' active' : ''}`, type = 'button', label = '', onChange = () => {}}) {
+    
+    const [checked, setChecked] = useState(defaultChecked);
 
     const toggleCheck = (event) => {
         let isChecked = event.target.checked;
         setChecked(isChecked);
 
         if (onChange) {
-            onChange(event);
+            onChange(isChecked);
         }
-    }
-
+    };
+    
     return (
-        <Form.Check
-            bsPrefix={bsPrefix}
-            type='checkbox'
-            checked={checked}
-            label={label}
-            onChange={toggleCheck}
-        />
-    )
+        <BSToggleButton
+        bsPrefix={bsPrefix}
+        type={type}
+        checked={checked}
+        onClick={toggleCheck}
+        >
+            {label}
+        </BSToggleButton>
+    );
 }

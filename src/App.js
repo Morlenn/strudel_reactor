@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
 import { evalScope } from '@strudel/core';
 import { drawPianoroll } from '@strudel/draw';
@@ -7,11 +7,15 @@ import { initAudioOnFirstClick } from '@strudel/webaudio';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
-import { stranger_tune } from './tunes';
+import Song from './Song';
+import { stranger_tune, bergheini, finance, euclid } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
-import ToggleButton from './components/ToggleButton';
+import CheckBox from './components/CheckBox';
 import ButtonGroup from './components/ButtonGroup';
-import TextArea from './components/TextArea'
+import ToggleGroup from './components/ToggleGroup';
+import InputGroup from './components/InputGroup';
+import Slider from './components/Slider';
+import PostRenderElements from './components/PostRenderElements';
 
 const handleD3Data = (event) => {
     console.log(event.detail);
@@ -19,12 +23,24 @@ const handleD3Data = (event) => {
 
 export default function StrudelDemo() {
 
+    const [controlElements, setControlElements] = useState([]);
+    const [soundElements, setSoundElements] = useState([]);
+    const [soundToggles, setSoundToggles] = useState([]);
+    const [codeUpdated, setCodeUpdated] = useState(false);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
+    let track;
 
     const play = () => {
         if (globalEditor.current) {
             globalEditor.current.evaluate();
+        }
+    }
+
+    const refresh = () => {
+        if (globalEditor.current && codeUpdated) {
+            globalEditor.current.evaluate();
+            setCodeUpdated(false);
         }
     }
 
@@ -36,8 +52,7 @@ export default function StrudelDemo() {
 
     const save = () => {
         if (globalEditor.current) {
-            // TODO: Save/load functionality
-            console.log(globalEditor.current.code);
+            new Song({code: globalEditor.current.code})
         }
     }
 
@@ -47,10 +62,19 @@ export default function StrudelDemo() {
         }
     }
 
+    const updateCode = (updatedCode) => {
+        updatedCode = Song.preProcessString(updatedCode);
+        if (updatedCode) { 
+            globalEditor.current.setCode(updatedCode);
+            setCodeUpdated(true);
+        }
+    }
+
     let navButtons = [
         // { label: 'Preprocess', onClick: Proc },
         // { label: 'Proc & Play', onClick: ProcAndPlay},
         { label: 'Play', onClick: play},
+        { label: 'Refresh', onClick: refresh, disabled: !codeUpdated},
         { label: 'Stop', onClick: stop},
         { label: 'Save', onClick: save},
         { label: 'Load', onClick: load}
@@ -59,6 +83,8 @@ export default function StrudelDemo() {
     useEffect(() => {
 
         if (!hasRun.current) {
+            let inputCode = Song.preProcessString(stranger_tune);
+
             document.addEventListener("d3Data", handleD3Data);
             console_monkey_patch();
             hasRun.current = true;
@@ -75,7 +101,7 @@ export default function StrudelDemo() {
                 transpiler,
                 root: document.getElementById('editor'),
                 // TODO: Change tune by selection.
-                initialCode: stranger_tune,
+                initialCode: inputCode,
                 drawTime,
                 onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
                 prebake: async () => {
@@ -90,6 +116,51 @@ export default function StrudelDemo() {
                     await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
                 },
             });
+
+            // Set track for strudel code processing.
+            track = new Song({code: globalEditor.current.code, repl: globalEditor.current.repl})
+            let newInputs = track.controls.map((control) => {
+                // Create new object from control to input props.
+                return {
+                    value: control.value,
+                    label: control.label,
+                    onChange: (currentValue, newValue) => {
+                        updateCode(globalEditor.current.code.replace(`${control.label}(${currentValue})`, `${control.label}(${newValue})`));
+                    }
+                };
+            })
+            setControlElements([<InputGroup inputs={newInputs}/>])  ;    
+            // Set sound toggles.
+            setSoundElements(track.sounds.map((sound) => {
+                    return <CheckBox
+                                label = {sound.label}
+                                defaultChecked = {true}
+                                onChange={(isChecked) => {
+                                    if (isChecked) {
+                                        // Remove underscore.
+                                        updateCode(globalEditor.current.code.replace(`_${sound.label}:`, `${sound.label}:`));
+
+                                    } else {
+                                        // Add underscore.
+                                        updateCode(globalEditor.current.code.replace(`${sound.label}:`, `_${sound.label}:`));
+                                    }
+                                    // globalEditor.current.evaluate();
+                                }}
+                            />
+            }));
+            setSoundToggles(track.variables.map((variable) => {
+                let buttons = [];
+                for (let i = 0; i < variable.length; i++) {
+                    buttons.push({ bsPrefix: 'btn-check', label: `${i+1}` })
+                }
+                return <ToggleGroup
+                                label={variable.label}
+                                buttons={buttons}
+                                onChange={(value) => {
+                                    updateCode(globalEditor.current.code.slice(0, variable.start) + value + globalEditor.current.code.slice(variable.end));
+                                }}
+                            />
+            }))
         }
 
     }, []);
@@ -111,10 +182,46 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                     <div className="row">
-                        {/* TODO: Update toggles to hush music */}
-                        <ToggleButton
-                            label = 'p1'
-                        />
+                        <div className='controls-container'>
+                            {/* Inputs to be added post render */}
+                            <PostRenderElements newElements={controlElements}/>
+                        </div>
+                        <div className='sound-container'>
+                            {/* Sound buttons to be added post render */}
+                            <PostRenderElements newElements={soundElements}/>
+                        </div>
+                        <div className='mb-3'>
+                            <Slider 
+                            label='Gain'
+                            disabled={true}
+                            toggle={{
+                                label: 'Gain Toggle',
+                                onChange: () => {
+                                    // Pattern matches global gain control.
+                                    let gainRegex = 'all\\(x => x\\.gain\\([0-9]*[.]?[0-9]+\\)\\)';
+                                    let match = globalEditor.current.code.match(`//${gainRegex}`);
+
+                                    // Disabled code.
+                                    if (match) {
+                                        updateCode(globalEditor.current.code.replace(match[0], `${match[0].slice(2)}`)); 
+                                    } else {
+                                        // Enable code.
+                                        let match = globalEditor.current.code.match(gainRegex);
+                                        if (match) {
+                                           updateCode(globalEditor.current.code.replace(match[0], `//${match[0]}`)); 
+                                        }
+                                    }
+                                }
+                            }}
+                            onChange={(oldValue, newValue) => {
+                                updateCode(globalEditor.current.code.replace(`all(x => x.gain(${oldValue}))`, `all(x => x.gain(${newValue}))`));
+                            }}
+                            />
+                        </div>
+                        <div className='toggle-container'>
+                            {/* Variable toggles to be added post render */}
+                            <PostRenderElements newElements={soundToggles}/>
+                        </div>
                     </div>
                 </div>
                 <canvas id="roll"></canvas>
