@@ -1,6 +1,6 @@
 import BSButtonGroup from 'react-bootstrap/ButtonGroup'
 import Form from 'react-bootstrap/Form';
-import ToggleButton from './RadioButton';
+import RadioButton from './RadioButton';
 import { useState, useId } from 'react';
 
 export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = [], label = '', onChange = () => {}}) {
@@ -24,7 +24,7 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
                 vertical={vertical}
             >
                 {buttons.map((props, index) => {
-                    return <ToggleButton 
+                    return <RadioButton 
                         {...props} 
                         id={`${id}-${index}`} 
                         value={index} 

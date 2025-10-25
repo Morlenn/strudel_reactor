@@ -34,14 +34,14 @@ export default class TuneProcessor {
                 return {
                             label: sound.label,
                             defaultChecked: true,
-                            onChange: (isChecked) => {
-                                if (isChecked) {
-                                    // Remove underscore.
-                                    this.updateCode(this.globalEditor.code.replace(`_${sound.label}:`, `${sound.label}:`));
+                            onChange: (isActive) => {
+                                if (isActive) {
+                                    // Add underscore to hush.
+                                    this.updateCode(this.globalEditor.code.replace(`${sound.label}:`, `_${sound.label}:`));
 
                                 } else {
-                                    // Add underscore.
-                                    this.updateCode(this.globalEditor.code.replace(`${sound.label}:`, `_${sound.label}:`));
+                                    // Remove underscore to unmute.
+                                    this.updateCode(this.globalEditor.code.replace(`_${sound.label}:`, `${sound.label}:`));
                                 }
                             }
                 }

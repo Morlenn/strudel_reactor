@@ -2,6 +2,9 @@ import CheckBox from './CheckBox';
 import InputGroup from './InputGroup';
 import Slider from './Slider';
 import ToggleGroup from './ToggleGroup';
+import ToggleButton from './ToggleButton';
+import { ToggleButtonGroup } from 'react-bootstrap';
+// import ToggleButton from './ToggleButton';
 
 import { useState, useEffect } from 'react';
 
@@ -25,14 +28,18 @@ export default function ControlDeck({ config }) {
                 {/* Inputs to be added post render */}
                 <InputGroup inputs={controlConfig.inputs}/>
             </div>
-            <div className='sound-container'>
+            <div className='d-flex justify-content-center row row-cols-2 row-cols-sm-3 row-cols-md-6 gx-5'>
                 {/* Sound buttons to be added post render */}
-                {controlConfig.sounds.map((sound) => {
-                    return <CheckBox
-                                label = {sound.label}
-                                defaultChecked = {true}
-                                onChange={sound.onChange}
-                            />
+                {controlConfig.sounds.map((sound, index) => {
+                    return <div className='col'>
+                                <ToggleButton
+                                    bsPrefix={'hush-button'}
+                                    id={`hush-button-${index+1}`}
+                                    variant=''
+                                    label={sound.label}
+                                    onClick={sound.onChange}
+                                />
+                            </div>
                 })}
             </div>
             <div className='mb-3'>

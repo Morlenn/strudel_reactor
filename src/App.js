@@ -17,6 +17,7 @@ import InputGroup from './components/InputGroup';
 import Slider from './components/Slider';
 import PostRenderElements from './components/PostRenderElements';
 import ControlDeck from './components/ControlDeck';
+import TuneFileManager from './TuneFileManager';
 
 const handleD3Data = (event) => {
     console.log(event.detail);
@@ -25,6 +26,8 @@ const handleD3Data = (event) => {
 export default function StrudelDemo() {
     
     const [codeUpdated, setCodeUpdated] = useState(false);
+    TuneFileManager.init();
+    console.log(TuneFileManager.getTunes())
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
 

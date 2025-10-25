@@ -1,27 +1,29 @@
-import BSToggleButton from 'react-bootstrap/ToggleButton';
+import Button from './Button';
 import { useState } from 'react'
 
-export default function ToggleButton({ defaultChecked = false, bsPrefix = `btn${ defaultChecked ? ' active' : ''}`, type = 'button', label = '', onChange = () => {}}) {
+export default function ToggleButton({ bsPrefix = `btn`, id = '', variant = 'primary', type = 'button', label = '', isActive = false, onClick: onClick = () => {}}) {
     
-    const [checked, setChecked] = useState(defaultChecked);
+    const [toggled, setToggled] = useState(isActive);
 
-    const toggleCheck = (event) => {
-        let isChecked = event.target.checked;
-        setChecked(isChecked);
-
-        if (onChange) {
-            onChange(isChecked);
+    const toggleCheck = () => {
+        
+        if (onClick) {
+            onClick(!toggled);
         }
+
+        setToggled(!toggled);
     };
     
     return (
-        <BSToggleButton
-        bsPrefix={bsPrefix}
-        type={type}
-        checked={checked}
-        onClick={toggleCheck}
-        >
-            {label}
-        </BSToggleButton>
+        <Button
+            bsPrefix={bsPrefix}
+            id={id}
+            variant={variant}
+            type={type}
+            label={label}
+            active={toggled}
+            onClick={toggleCheck}
+        />
+            
     );
 }
