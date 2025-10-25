@@ -37,12 +37,12 @@ export default function ControlDeck({ config }) {
                                     id={`hush-button-${index+1}`}
                                     variant=''
                                     label={sound.label}
-                                    onClick={sound.onChange}
+                                    onClick={sound.onChange}                                
                                 />
                             </div>
                 })}
             </div>
-            <div className='mb-3'>
+            <div className='slider mb-3'>
                 {/* Slider to control global gain, with disable toggle. */}
                 <Slider 
                 label='Gain'
@@ -77,6 +77,7 @@ export default function ControlDeck({ config }) {
                 {controlConfig.variables.map((variable) => {
                     return <div>
                                 <ToggleGroup
+                                    bsPrefix='btn-group toggle-group'
                                     label={variable.label}
                                     buttons={variable.buttons}
                                     onChange={(value) => {
