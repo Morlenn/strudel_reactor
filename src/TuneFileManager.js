@@ -6,8 +6,8 @@ export default class TuneFileManager {
 
     static init() {
         fetch(this.savedTunesLocation)
-            .then((res) => { res.json(); console.log(res)})
-            .then((data) => { console.log(data); this.tunes = data; })
+            .then((res) => { res.json(); })
+            .then((data) => { this.tunes = data; })
     }
 
     static getTunes() {

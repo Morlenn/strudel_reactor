@@ -1,6 +1,6 @@
 import BSButton from 'react-bootstrap/Button';
 
-export default function Button({ bsPrefix = 'btn', id = '', variant = 'primary', size = '', disabled = false, label = '', onClick = () => {}, type = 'button', active = false}) {
+export default function Button({ bsPrefix = 'btn', id = '', variant = 'primary', size = '', disabled = false, label = '', onClick = () => {}, type = 'button', active = false, wrapLabel = false}) {
     return (
         <BSButton
             bsPrefix={bsPrefix}
@@ -12,7 +12,9 @@ export default function Button({ bsPrefix = 'btn', id = '', variant = 'primary',
             type={type}
             active={active}
         >
-            <span>{label}</span>
+            {wrapLabel && <span>{label}</span>}
+            {!wrapLabel && label}
+            
         </BSButton>
     )
 }

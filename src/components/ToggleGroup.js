@@ -15,16 +15,16 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
     };
 
     return (
-        <>
-            <Form.Label htmlFor={id}>
+        <div className='text-center'>
+            <div className='fs-4 text-uppercase fw-semibold mb-2'>
                 {label}
-            </Form.Label>
+            </div>
             <BSButtonGroup
                 bsPrefix={bsPrefix}
                 id={id}
                 size={size}
                 vertical={vertical}
-            >
+                >
                 {buttons.map((props, index) => {
 
                     return <div className='col'>
@@ -39,6 +39,6 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
                         </div>
                 })}
             </BSButtonGroup>
-        </>
+        </div>
     );
 }

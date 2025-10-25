@@ -2,16 +2,19 @@ import { parse } from 'acorn';
 
 export default class TuneProcessor {
 
+    static trackedExpressions = [ 'setcps', 'setcpm' ];
+    static sliders = ['gain', 'distort', 'room', 'delay', 'coarse', 'phaser'];
+
     static init(props) {
         this.globalEditor = props.globalEditor;
         this.updateCode = props.updateCode
-        this.trackedExpressions = [ 'setcps', 'setcpm' ];
     }
 
     static createControlDeckConfig() {
         let controlDeckObjects = TuneProcessor.processInputString(this.globalEditor.code);
         let controlDeckConfig = {
             inputs: [],
+            sliders: [],
             sounds: [],
             variables: [],
             updateCode: this.updateCode,
@@ -27,6 +30,37 @@ export default class TuneProcessor {
                     this.updateCode(this.globalEditor.code.replace(`${control.label}(${currentValue})`, `${control.label}(${newValue})`));
                 }
             };
+        })
+
+        // Create slider configs.
+        controlDeckConfig.sliders = TuneProcessor.sliders.map((slider) => {
+            return {
+                label: slider.charAt(0).toUpperCase() + slider.slice(1),
+                disabled: true,
+                vertical: true,
+                onChange: (oldValue, newValue) => {
+                    this.updateCode(this.globalEditor.code.replace(`all(x => x.${slider}(${oldValue}))`, `all(x => x.${slider}(${newValue}))`));
+                },
+                toggle: {
+                    size: 'sm',
+                    onChange: () => {
+                        // Pattern matches global control.
+                        let gainRegex = `all\\(x => x\\.${slider}\\([0-9]*[.]?[0-9]+\\)\\)`;
+                        let match = this.globalEditor.code.match(`//${gainRegex}`);
+
+                        // Disabled code.
+                        if (match) {
+                            this.updateCode(this.globalEditor.code.replace(match[0], `${match[0].slice(2)}`)); 
+                        } else {
+                            // Enable code.
+                            let match = this.globalEditor.code.match(gainRegex);
+                            if (match) {
+                                this.updateCode(this.globalEditor.code.replace(match[0], `//${match[0]}`)); 
+                            }
+                        }
+                    }
+                }
+            }
         })
   
         // Create sound toggle configs.
@@ -64,10 +98,11 @@ export default class TuneProcessor {
     }
 
     static preProcessString(input) {
-        if (input.match(/gain\(\d.*\)/))
-        if (!input.match(/all\([\s\S]*.gain\(\d.*\)/)) {
-            input = input.concat('\n//all(x => x.gain(1))');
-        }
+        TuneProcessor.sliders.forEach((slider) => {
+            if (!input.match(`all\\([\\s\\S]*.${slider}\\(\\d.*\\)`)) {
+                input = input.concat(`\n//all(x => x.${slider}(1))`);
+            }
+        });
         return input;
     }
 
@@ -88,7 +123,7 @@ export default class TuneProcessor {
             // Process controls such as: setcps, gain
             if (node.type === 'ExpressionStatement') {
                 let callName = node.expression.callee.name;
-                if (this.trackedExpressions.includes(callName)) {
+                if (TuneProcessor.trackedExpressions.includes(callName)) {
                     let fullMatchedString = this.globalEditor.code.slice(node.start, node.end)
                     let controlValue = (fullMatchedString) ? this.globalEditor.code.match('\\((.*)\\)') : '';
                     if (controlValue) {

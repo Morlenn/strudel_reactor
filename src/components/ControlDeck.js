@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 export default function ControlDeck({ config }) {
 
     const [controlConfig, setControlConfig] = useState(config);
+    console.log(controlConfig)
 
     const updateCode = (updatedCode) => {
         controlConfig.updateCode(updatedCode);
@@ -23,70 +24,63 @@ export default function ControlDeck({ config }) {
         }, [config]);
 
     return (
-        <>
-            <div className='controls-container'>
-                {/* Inputs to be added post render */}
-                <InputGroup inputs={controlConfig.inputs}/>
-            </div>
-            <div className='d-flex justify-content-center row row-cols-2 row-cols-sm-3 row-cols-md-6 gx-5'>
-                {/* Sound buttons to be added post render */}
-                {controlConfig.sounds.map((sound, index) => {
-                    return <div className='col'>
-                                <ToggleButton
-                                    bsPrefix={'hush-button'}
-                                    id={`hush-button-${index+1}`}
-                                    variant=''
-                                    label={sound.label}
-                                    onClick={sound.onChange}                                
-                                />
-                            </div>
-                })}
-            </div>
-            <div className='slider mb-3'>
-                {/* Slider to control global gain, with disable toggle. */}
-                <Slider 
-                label='Gain'
-                disabled={true}
-                toggle={{
-                    label: 'Gain Toggle',
-                    onChange: () => {
-                        // Pattern matches global gain control.
-                        let gainRegex = 'all\\(x => x\\.gain\\([0-9]*[.]?[0-9]+\\)\\)';
-                        let match = controlConfig.globalEditor.code.match(`//${gainRegex}`);
+        <div className='d-flex justify-content-center'>
+            <div className='col-12 col-md-12 col-lg-10 col-xxl-7 p-3 border border-black border-5 rounded shadow-sm'>
+                <div className='row'>
+                    <div className='col-12 col-md-8'>
+                        <div className='d-flex justify-content-center flex-wrap'>
+                            {/* Sound buttons to be added post render */}
+                            {controlConfig.sounds.map((sound, index) => {
+                                return <div className='mx-2 mb-4'>
+                                            <ToggleButton
+                                                bsPrefix={'hush-button'}
+                                                id={`hush-button-${index+1}`}
+                                                variant=''
+                                                label={sound.label}
+                                                onClick={sound.onChange}
+                                                wrapLabel={true}                                
+                                            />
+                                        </div>
+                            })}
+                        </div>
+                        <div className='d-flex justify-content-center flex-wrap'>
+                            {/* Variable toggles to be added post render */}
 
-                        // Disabled code.
-                        if (match) {
-                            updateCode(controlConfig.globalEditor.code.replace(match[0], `${match[0].slice(2)}`)); 
-                        } else {
-                            // Enable code.
-                            let match = controlConfig.globalEditor.code.match(gainRegex);
-                            if (match) {
-                                updateCode(controlConfig.globalEditor.code.replace(match[0], `//${match[0]}`)); 
-                            }
-                        }
-                    }
-                }}
-                onChange={(oldValue, newValue) => {
-                    updateCode(controlConfig.globalEditor.code.replace(`all(x => x.gain(${oldValue}))`, `all(x => x.gain(${newValue}))`));
-                }}
-                />
+                            {controlConfig.variables.map((variable) => {
+                                return <div className='mx-3 mb-5'>
+                                            <ToggleGroup
+                                                bsPrefix='btn-group toggle-group'
+                                                label={variable.label}
+                                                buttons={variable.buttons}
+                                                onChange={(value) => {
+                                                    updateCode(controlConfig.globalEditor.code.slice(0, variable.start) + value + controlConfig.globalEditor.code.slice(variable.end));
+                                                }}
+                                            />
+                                        </div>
+                            })}
+                        </div>
+                    </div>
+                    <div className='col-12 col-md-4'>
+                        <div className='controls-container d-flex justify-content-center flex-wrap'>
+                            {/* Inputs to be added post render */}
+                            <InputGroup inputs={controlConfig.inputs}/>
+                        </div>
+                        
+                        <div className='slider-container d-flex justify-content-center flex-wrap'>
+                            {/* Slider to control global gain, with disable toggle. */}
+                            {controlConfig.sliders.map((slider) => {
+                                return <Slider 
+                                            label={slider.label}
+                                            disabled={slider.disabled}
+                                            vertical={slider.vertical}
+                                            onChange={slider.onChange}
+                                            toggle={slider.toggle}
+                                        />
+                            })}
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className='toggle-container'>
-                {/* Variable toggles to be added post render */}
-
-                {controlConfig.variables.map((variable) => {
-                    return <div>
-                                <ToggleGroup
-                                    bsPrefix='btn-group toggle-group'
-                                    label={variable.label}
-                                    buttons={variable.buttons}
-                                    onChange={(value) => {
-                                        updateCode(controlConfig.globalEditor.code.slice(0, variable.start) + value + controlConfig.globalEditor.code.slice(variable.end));
-                                    }}
-                                />
-                            </div>
-                })}
-            </div>
-        </>
+        </div>
     );
 }

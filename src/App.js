@@ -1,4 +1,5 @@
 import './App.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
 import { evalScope } from '@strudel/core';
@@ -27,7 +28,7 @@ export default function StrudelDemo() {
     
     const [codeUpdated, setCodeUpdated] = useState(false);
     TuneFileManager.init();
-    console.log(TuneFileManager.getTunes())
+    // console.log(TuneFileManager.getTunes())
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
 
@@ -76,16 +77,17 @@ export default function StrudelDemo() {
         inputs: [],
         sounds: [],
         variables: [],
+        sliders: [],
         updateCode: updateCode,
         globalEditor: globalEditor
     });
 
     let navButtons = [
-        { label: 'Play', onClick: play},
-        { label: 'Refresh', onClick: refresh, disabled: !codeUpdated},
-        { label: 'Stop', onClick: stop},
-        { label: 'Save', onClick: save},
-        { label: 'Load', onClick: load}
+        { label: <i class="bi bi-play-fill"></i>, onClick: play},
+        { label: <i class="bi bi-arrow-clockwise"></i>, onClick: refresh, disabled: !codeUpdated},
+        { label: <i class="bi bi-stop-fill"></i>, onClick: stop},
+        { label: <i class="bi bi-download"></i>, onClick: save},
+        { label: <i class="bi bi-upload"></i>, onClick: load}
     ];
 
     useEffect(() => {
