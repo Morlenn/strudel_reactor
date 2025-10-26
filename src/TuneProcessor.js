@@ -1,5 +1,6 @@
 import { parse } from 'acorn';
 
+// TODO: Sort node processing so some nodes are process
 export default class TuneProcessor {
 
     static trackedExpressions = [ 'setcps', 'setcpm' ];
@@ -23,12 +24,26 @@ export default class TuneProcessor {
 
         // Create global input configs.
         controlDeckConfig.inputs = controlDeckObjects.controls.map((control) => {
+            // Comment out any controls with nullish values.
+            if (!control.value) {
+                this.updateCode(this.globalEditor.code.slice(0, control.start) + '//' + this.globalEditor.code.slice(control.start));
+            }
+
             return {
                 bsPrefix: 'form-control border border-2 border-danger',
                 value: control.value,
                 label: control.label,
                 onChange: (currentValue, newValue) => {
-                    this.updateCode(this.globalEditor.code.replace(`${control.label}(${currentValue})`, `${control.label}(${newValue})`));
+                    if (newValue) {
+                        // Replace value and/or remove slashes to uncomment
+                        let updateRegex = new RegExp(`(?:\\/\\/)?${control.label}\\(.*\\)`);
+                        let match = this.globalEditor.code.match(updateRegex);
+                        this.updateCode(this.globalEditor.code.replace(match[0], `${control.label}(${newValue})`));
+                    } else {
+                        // Comment out input to prevent errors.
+                        this.updateCode(this.globalEditor.code.replace(`${control.label}(${currentValue})`, `//${control.label}(${newValue})`));
+                    }
+                    
                 }
             };
         })
@@ -107,11 +122,13 @@ export default class TuneProcessor {
         });
         TuneProcessor.trackedExpressions.forEach((expression) => {
             if (!input.match(`${expression}\\((.*)\\)`)) {
-                console.log('bad')
-                input = `${expression}()\n`.concat(input);
+                input = input.concat(`\n${expression}()`);
+            } else {
+                let match = input.match(`${expression}\\(.*\\)`);
+                input = input.slice(0, match.index) + input.slice(match[0].length) + `\n${match[0]}`
             }
         });
-        return input;
+        return input.trimStart();
     }
 
     static processInputString(input) {

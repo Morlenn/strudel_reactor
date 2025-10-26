@@ -142,6 +142,7 @@ textarea.text-processing {
   border-radius: 0 0.75em 0.75em 0;
 }
 
+// Set width of text inputs.
 .controls-container {
    div {
     width: 100px;
@@ -151,6 +152,7 @@ textarea.text-processing {
 
 .range {
     accent-color: #dc3545;
+    height: 180px;
 }
 
 .range-vertical {

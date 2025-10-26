@@ -66,7 +66,7 @@ export default function StrudelDemo() {
     }
 
     const updateCode = (updatedCode) => {
-        updatedCode = TuneProcessor.preProcessString(updatedCode);
+        // updatedCode = TuneProcessor.preProcessString(updatedCode);
         if (updatedCode) {
             globalEditor.current.setCode(updatedCode);
             setCodeUpdated(true);

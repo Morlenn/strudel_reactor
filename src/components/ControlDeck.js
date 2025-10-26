@@ -11,7 +11,6 @@ import { useState, useEffect } from 'react';
 export default function ControlDeck({ config }) {
 
     const [controlConfig, setControlConfig] = useState(config);
-    console.log(controlConfig)
 
     const updateCode = (updatedCode) => {
         controlConfig.updateCode(updatedCode);
