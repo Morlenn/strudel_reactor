@@ -24,6 +24,7 @@ export default class TuneProcessor {
         // Create global input configs.
         controlDeckConfig.inputs = controlDeckObjects.controls.map((control) => {
             return {
+                bsPrefix: 'form-control border border-2 border-danger',
                 value: control.value,
                 label: control.label,
                 onChange: (currentValue, newValue) => {
@@ -43,6 +44,7 @@ export default class TuneProcessor {
                 },
                 toggle: {
                     size: 'sm',
+                    variant: 'danger',
                     onChange: () => {
                         // Pattern matches global control.
                         let gainRegex = `all\\(x => x\\.${slider}\\([0-9]*[.]?[0-9]+\\)\\)`;
@@ -103,6 +105,12 @@ export default class TuneProcessor {
                 input = input.concat(`\n//all(x => x.${slider}(1))`);
             }
         });
+        TuneProcessor.trackedExpressions.forEach((expression) => {
+            if (!input.match(`${expression}\\((.*)\\)`)) {
+                console.log('bad')
+                input = `${expression}()\n`.concat(input);
+            }
+        });
         return input;
     }
 
@@ -125,9 +133,9 @@ export default class TuneProcessor {
                 let callName = node.expression.callee.name;
                 if (TuneProcessor.trackedExpressions.includes(callName)) {
                     let fullMatchedString = this.globalEditor.code.slice(node.start, node.end)
-                    let controlValue = (fullMatchedString) ? this.globalEditor.code.match('\\((.*)\\)') : '';
+                    let controlValue = fullMatchedString ? fullMatchedString.match(/\((.*?)\)/) : '';
                     if (controlValue) {
-                        controlDeckObjects.controls.push({ label: callName, start: node.start, end: node.end, value: controlValue[1] })
+                        controlDeckObjects.controls.push({ label: callName, start: node.start, end: node.end, value: controlValue[1] });
                     }
                 }
             }

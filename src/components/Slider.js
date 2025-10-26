@@ -4,7 +4,7 @@ import ToggleButton from './ToggleButton';
 import CheckBox from './CheckBox';
 import { useState } from 'react';
 
-export default function Slider({ bsPrefix = 'form-range', min = '0', max = '5', step = '0.5', defaultValue = '1', vertical = false, label = '', disabled = false, toggle = {}, onChange = () => {}}) {
+export default function Slider({ addClass = '', min = '0', max = '5', step = '0.5', defaultValue = '1', vertical = false, label = '', disabled = false, toggle = {}, onChange = () => {}}) {
     
     const [output, setOutput] = useState(defaultValue)
     const [value, setValue] = useState(defaultValue)
@@ -32,8 +32,8 @@ export default function Slider({ bsPrefix = 'form-range', min = '0', max = '5', 
    
     return (
         <div className='slider-wrapper text-center'>
-            <input
-                className={`range${vertical ? ' range-vertical' : ''}`}
+                <input
+                className={`range${vertical ? ' range-vertical' : ''}${addClass ? ` ${addClass}` : ''}`}
                 type='range'
                 min={min}
                 max={max}
@@ -41,15 +41,10 @@ export default function Slider({ bsPrefix = 'form-range', min = '0', max = '5', 
                 value={value}
                 onChange={rangeOutput}
                 disabled={state}
-            />
-            <div>
+                />
                 <div>
                     <Form.Label>{`${label}: ${output}`}</Form.Label>
                 </div>
-                
-
-                
-
                 {/* Conditionally add toggle button */}
                 {toggle && 
                 <div>
@@ -62,6 +57,5 @@ export default function Slider({ bsPrefix = 'form-range', min = '0', max = '5', 
                     />
                 </div>}
             </div>
-        </div>
     );
 }

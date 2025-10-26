@@ -1,4 +1,4 @@
-import './App.css';
+import './App.scss';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
@@ -25,7 +25,7 @@ const handleD3Data = (event) => {
 };
 
 export default function StrudelDemo() {
-    
+
     const [codeUpdated, setCodeUpdated] = useState(false);
     TuneFileManager.init();
     // console.log(TuneFileManager.getTunes())
@@ -67,7 +67,7 @@ export default function StrudelDemo() {
 
     const updateCode = (updatedCode) => {
         updatedCode = TuneProcessor.preProcessString(updatedCode);
-        if (updatedCode) { 
+        if (updatedCode) {
             globalEditor.current.setCode(updatedCode);
             setCodeUpdated(true);
         }
@@ -83,11 +83,11 @@ export default function StrudelDemo() {
     });
 
     let navButtons = [
-        { label: <i class="bi bi-play-fill"></i>, onClick: play},
-        { label: <i class="bi bi-arrow-clockwise"></i>, onClick: refresh, disabled: !codeUpdated},
-        { label: <i class="bi bi-stop-fill"></i>, onClick: stop},
-        { label: <i class="bi bi-download"></i>, onClick: save},
-        { label: <i class="bi bi-upload"></i>, onClick: load}
+        { label: <i class="bi bi-play-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: play },
+        { label: <i class="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: refresh, disabled: !codeUpdated },
+        { label: <i class="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: stop },
+        { label: <i class="bi bi-download"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: save },
+        { label: <i class="bi bi-upload"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: load }
     ];
 
     useEffect(() => {
@@ -130,27 +130,26 @@ export default function StrudelDemo() {
             TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
             setControlConfig(TuneProcessor.createControlDeckConfig());
         }
-
     }, []);
 
     return (
         <div>
-            <h2>Strudel Demo</h2>
             <main>
-                <div className="container-fluid">
+                <div className="container-lg">
                     <div className="row">
-                        <div className="col-12" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
-                            <div id="editor" />
+                        <div className="col-12 border border-5 border-secondary" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                            <div id="editor" className='' />
                             {/* <div id="output" /> */}
                         </div>
                         <div className="col text-center">
                             <ButtonGroup
+                                size='lg'
                                 buttons={navButtons}
                             />
                         </div>
                     </div>
-                    <div className="row">
-                        <ControlDeck config={controlConfig}/>
+                    <div className="col-12">
+                        <ControlDeck config={controlConfig} />
                     </div>
                 </div>
                 <canvas id="roll"></canvas>

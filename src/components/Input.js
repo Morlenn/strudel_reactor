@@ -18,8 +18,8 @@ export default function Input({ bsPrefix = 'form-control', type = 'text', id = '
       };
 
   return (
-    <>
-        <Form.Label htmlFor={id}>{label}</Form.Label>
+    <div>
+        <Form.Label bsPrefix='form-label mb-1' htmlFor={id}>{label}</Form.Label>
         <Form.Control
           bsPrefix={bsPrefix}
           type={type}
@@ -28,7 +28,7 @@ export default function Input({ bsPrefix = 'form-control', type = 'text', id = '
           placeholder={inputPlaceholder}
           size={size}
           onChange={inputChange}
-      />
-    </>
+        />
+    </div>
   );
 }

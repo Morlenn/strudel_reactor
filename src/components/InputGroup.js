@@ -13,14 +13,10 @@ export default function InputGroup({ bsPrefix = 'input-group', size = 'size', in
         }, [inputs]);
 
     return (
-        <BSInputGroup
-            bsPrefix={bsPrefix}
-            size={size}
-            id={id}
-        >
+        <>
             {groupInputs.map((props, index) => {
-                            return <Input {...props} id={`${id}-${index}`}/>;
-                        })}
-        </BSInputGroup>
+                                    return <div><Input {...props} id={`${id}-${index}`}/></div>;
+                                })}
+        </>
     );
 }

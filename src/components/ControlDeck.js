@@ -24,11 +24,11 @@ export default function ControlDeck({ config }) {
         }, [config]);
 
     return (
-        <div className='d-flex justify-content-center'>
-            <div className='col-12 col-md-12 col-lg-10 col-xxl-7 p-3 border border-black border-5 rounded shadow-sm'>
+        <div className='control-deck bg-dark border border-secondary border-5 rounded shadow-sm text-white'>
+            <div className='col-12 p-3'>
                 <div className='row'>
-                    <div className='col-12 col-md-8'>
-                        <div className='d-flex justify-content-center flex-wrap'>
+                    <div className='col-12 col-md-6 col-lg-7'>
+                        <div className='d-flex justify-content-start flex-wrap'>
                             {/* Sound buttons to be added post render */}
                             {controlConfig.sounds.map((sound, index) => {
                                 return <div className='mx-2 mb-4'>
@@ -43,7 +43,7 @@ export default function ControlDeck({ config }) {
                                         </div>
                             })}
                         </div>
-                        <div className='d-flex justify-content-center flex-wrap'>
+                        <div className='d-flex justify-content-start flex-wrap'>
                             {/* Variable toggles to be added post render */}
 
                             {controlConfig.variables.map((variable) => {
@@ -60,16 +60,17 @@ export default function ControlDeck({ config }) {
                             })}
                         </div>
                     </div>
-                    <div className='col-12 col-md-4'>
-                        <div className='controls-container d-flex justify-content-center flex-wrap'>
+                    <div className='col-12 col-md-6 col-lg-5'>
+                        <div className='controls-container d-flex justify-content-start flex-wrap text-center border border-3 shadow-sm mb-3 p-2 fs-6 text-uppercase fw-semibold'>
                             {/* Inputs to be added post render */}
                             <InputGroup inputs={controlConfig.inputs}/>
                         </div>
                         
-                        <div className='slider-container d-flex justify-content-center flex-wrap'>
+                        <div className='slider-container d-flex justify-content-start flex-wrap border border-3 shadow-sm pb-3'>
                             {/* Slider to control global gain, with disable toggle. */}
                             {controlConfig.sliders.map((slider) => {
                                 return <Slider 
+                                            addClass='m-3 mx-5'
                                             label={slider.label}
                                             disabled={slider.disabled}
                                             vertical={slider.vertical}
