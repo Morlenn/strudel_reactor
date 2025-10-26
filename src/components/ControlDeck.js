@@ -28,10 +28,10 @@ export default function ControlDeck({ config }) {
             <div className='col-12 p-3'>
                 <div className='row'>
                     <div className='col-12 col-md-6 col-lg-7'>
-                        <div className='d-flex justify-content-start flex-wrap'>
+                        <div className='d-flex justify-content-start flex-wrap mb-4'>
                             {/* Sound buttons to be added post render */}
                             {controlConfig.sounds.map((sound, index) => {
-                                return <div className='mx-2 mb-4'>
+                                return <div className='m-4'>
                                             <ToggleButton
                                                 bsPrefix={'hush-button'}
                                                 id={`hush-button-${index+1}`}
