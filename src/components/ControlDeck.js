@@ -3,14 +3,14 @@ import InputGroup from './InputGroup';
 import Slider from './Slider';
 import ToggleGroup from './ToggleGroup';
 import ToggleButton from './ToggleButton';
-import { ToggleButtonGroup } from 'react-bootstrap';
-// import ToggleButton from './ToggleButton';
+import Visualiser from './Visualiser';
 
 import { useState, useEffect } from 'react';
 
-export default function ControlDeck({ config }) {
+export default function ControlDeck({ config = {}, visualiserData = [] }) {
 
     const [controlConfig, setControlConfig] = useState(config);
+    const [visualData, setVisualData] = useState([visualiserData])
 
     const updateCode = (updatedCode) => {
         controlConfig.updateCode(updatedCode);
@@ -22,8 +22,15 @@ export default function ControlDeck({ config }) {
             }
         }, [config]);
 
+    useEffect(() => {
+            if (visualiserData.length) {
+                setVisualData(visualiserData);
+            }
+        }, [visualiserData]);
+
     return (
         <div className='control-deck bg-dark border border-secondary border-5 rounded shadow-sm text-white'>
+            <Visualiser data={visualData}/>
             <div className='col-12 p-3'>
                 <div className='row'>
                     <div className='col-12 col-md-6 col-lg-7'>

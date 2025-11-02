@@ -81,7 +81,11 @@ export default function StrudelDemo() {
         if (match) {
             gainValues.push(Number(match[1]));
         }
-    }); //.match(/^gain:(\d*.\d*)$/);
+    });
+
+    // Keep values to between 0 and 1
+    gainValues = gainValues.map((gain) => Math.min(Math.pow(gain, 1.5), 1));
+
     console.log(gainValues)
     setStrudelData(gainValues);
     };
@@ -163,8 +167,7 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                     <div className="col-12">
-                        <Visualiser data={strudelData}/>
-                        <ControlDeck config={controlConfig} />
+                        <ControlDeck config={controlConfig} visualiserData={strudelData} />
                     </div>
                 </div>
                 <canvas id="roll"></canvas>
