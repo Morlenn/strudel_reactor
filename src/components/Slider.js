@@ -52,7 +52,7 @@ export default function Slider({ addClass = '', min = '0', max = '5', step = '0.
                         bsPrefix={toggle.bsPrefix}
                         size={toggle.size}
                         variant={toggle.variant}
-                        label={ !state ? <i class="bi bi-volume-up"></i> : <i class="bi bi-volume-mute"></i> }
+                        label={ !state ? <i className="bi bi-volume-up"></i> : <i className="bi bi-volume-mute"></i> }
                         onClick={toggleState}                               
                     />
                 </div>}

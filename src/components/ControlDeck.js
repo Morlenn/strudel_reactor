@@ -65,7 +65,7 @@ export default function ControlDeck({ config }) {
                             <InputGroup inputs={controlConfig.inputs}/>
                         </div>
                         
-                        <div className='slider-container d-flex justify-content-start flex-wrap border border-3 shadow-sm pb-3'>
+                        <div className='slider-container d-flex justify-content-center flex-wrap border border-3 shadow-sm pb-3'>
                             {/* Slider to control global gain, with disable toggle. */}
                             {controlConfig.sliders.map((slider) => {
                                 return <Slider 

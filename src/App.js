@@ -1,5 +1,5 @@
-import './App.scss';
-import "bootstrap-icons/font/bootstrap-icons.css";
+// import './App.scss';
+// import "bootstrap-icons/font/bootstrap-icons.css";
 import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
 import { evalScope } from '@strudel/core';
@@ -19,14 +19,12 @@ import Slider from './components/Slider';
 import PostRenderElements from './components/PostRenderElements';
 import ControlDeck from './components/ControlDeck';
 import TuneFileManager from './TuneFileManager';
-
-const handleD3Data = (event) => {
-    console.log(event.detail);
-};
+import Graph from './components/Graph';
 
 export default function StrudelDemo() {
 
     const [codeUpdated, setCodeUpdated] = useState(false);
+    const [strudelData, setStrudelData] = useState([]);
     TuneFileManager.init();
     // console.log(TuneFileManager.getTunes())
     const globalEditor = useRef(null);
@@ -38,32 +36,32 @@ export default function StrudelDemo() {
             if (codeUpdated) { setCodeUpdated(false); }
             globalEditor.current.evaluate();
         }
-    }
+    };
 
     const refresh = () => {
         if (globalEditor.current && codeUpdated) {
             globalEditor.current.evaluate();
             setCodeUpdated(false);
         }
-    }
+    };
 
     const stop = () => {
         if (globalEditor.current) {
             globalEditor.current.stop();
         }
-    }
+    };
 
     const save = () => {
         if (globalEditor.current) {
             // TODO: Save/load functionality
         }
-    }
+    };
 
     const load = () => {
         if (globalEditor.current) {
             // TODO: Save/load functionality
         }
-    }
+    };
 
     const updateCode = (updatedCode) => {
         // updatedCode = TuneProcessor.preProcessString(updatedCode);
@@ -71,7 +69,15 @@ export default function StrudelDemo() {
             globalEditor.current.setCode(updatedCode);
             setCodeUpdated(true);
         }
-    }
+    };
+
+    const handleD3Data = (event) => {
+    console.log('HERE')
+    console.log(event.detail);
+    let strudelData = getD3Data();
+    console.log(strudelData)
+    setStrudelData(strudelData);
+    };
 
     const [controlConfig, setControlConfig] = useState({
         inputs: [],
@@ -83,11 +89,11 @@ export default function StrudelDemo() {
     });
 
     let navButtons = [
-        { label: <i class="bi bi-play-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: play },
-        { label: <i class="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: refresh, disabled: !codeUpdated },
-        { label: <i class="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: stop },
-        { label: <i class="bi bi-download"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: save },
-        { label: <i class="bi bi-upload"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: load }
+        { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: play },
+        { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: refresh, disabled: !codeUpdated },
+        { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: stop },
+        { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: save },
+        { label: <i className="bi bi-upload"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: load }
     ];
 
     useEffect(() => {
@@ -129,6 +135,8 @@ export default function StrudelDemo() {
 
             TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
             setControlConfig(TuneProcessor.createControlDeckConfig());
+            setCodeUpdated(false); // Disable refresh on init.
+            console.log(getD3Data())
         }
     }, []);
 
@@ -149,6 +157,7 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                     <div className="col-12">
+                        <Graph data={strudelData}/>
                         <ControlDeck config={controlConfig} />
                     </div>
                 </div>

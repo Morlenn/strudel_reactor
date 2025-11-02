@@ -129,6 +129,14 @@ textarea.text-processing {
     border: none;
 }
 
+.glow-small.active {
+    background: #DF6165;
+    // box-shadow: 0 0 4px #DF6165, 0 0 30px #DF6165, 
+    // 0 0 30px #DF6165, 0 0 100px #DF6165;
+    box-shadow:0 0 15px #DF6165, 0 0 15px #DF6165;
+    border: none;
+}
+
 /* Unround border on toggle group buttons based on position */
 .toggle-group > :first-child > .hush-button {
   border-radius: 0.75em 0 0 0.75em;

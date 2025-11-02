@@ -4,7 +4,7 @@ import { parse } from 'acorn';
 export default class TuneProcessor {
 
     static trackedExpressions = [ 'setcps', 'setcpm' ];
-    static sliders = ['gain', 'distort', 'room', 'delay', 'coarse', 'phaser'];
+    static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
 
     static init(props) {
         this.globalEditor = props.globalEditor;
@@ -58,8 +58,8 @@ export default class TuneProcessor {
                     this.updateCode(this.globalEditor.code.replace(`all(x => x.${slider}(${oldValue}))`, `all(x => x.${slider}(${newValue}))`));
                 },
                 toggle: {
+                    bsPrefix: 'btn btn-danger glow-small',
                     size: 'sm',
-                    variant: 'danger',
                     onChange: () => {
                         // Pattern matches global control.
                         let gainRegex = `all\\(x => x\\.${slider}\\([0-9]*[.]?[0-9]+\\)\\)`;
