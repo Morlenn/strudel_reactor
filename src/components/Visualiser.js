@@ -1,29 +1,28 @@
 import { useEffect, useState } from "react";
 import * as d3 from 'd3';
 
-export default function Graph({ data = [] }) {
+export default function Visualiser({ data = [] }) {
     const [rngNumber, setRngNumber] = useState(0);
     const [strudelData, setStrudelData] = useState(data);
     const maxItems = 50;
     const timeOut = 100;
     const maxValue = 1;
 
-    function LogToNum(input) {
-        if (!input) { return 0; }
-        let stringArray = input.split(/(\s+)/);
+    // function LogToNum(input) {
+    //     if (!input) { return 0; }
+    //     let stringArray = input.split(/(\s+)/);
 
-        for (const item of stringArray) {
-            if (item.startsWith('gain:')) {
-                let val = item.substring(5)
-                return Number(val)
-            }
-        }
-        return 0;
-    }
+    //     for (const item of stringArray) {
+    //         if (item.startsWith('gain:')) {
+    //             let val = item.substring(5)
+    //             return Number(val)
+    //         }
+    //     }
+    //     return 0;
+    // }
 
     useEffect(() => {
             if (data.length) {
-                console.log(data)
                 setStrudelData(data);               
             }
         }, [data]);
@@ -119,7 +118,7 @@ export default function Graph({ data = [] }) {
         // Draw me some lines
         chartGroup
             .append('path')
-            .datum(strudelData.map((d) => LogToNum(d)))
+            .datum(strudelData)
             .attr('fill', 'none')
             .attr('stroke', 'url(#line-gradient)')
             .attr('stroke-width', 1.5)

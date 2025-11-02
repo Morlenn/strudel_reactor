@@ -19,7 +19,7 @@ import Slider from './components/Slider';
 import PostRenderElements from './components/PostRenderElements';
 import ControlDeck from './components/ControlDeck';
 import TuneFileManager from './TuneFileManager';
-import Graph from './components/Graph';
+import Visualiser from './components/Visualiser';
 
 export default function StrudelDemo() {
 
@@ -72,11 +72,18 @@ export default function StrudelDemo() {
     };
 
     const handleD3Data = (event) => {
-    console.log('HERE')
-    console.log(event.detail);
+    // console.log(event.detail);
     let strudelData = getD3Data();
-    console.log(strudelData)
-    setStrudelData(strudelData);
+    let gainValues = [];
+    strudelData.forEach((data) => { 
+        let gainRegex = new RegExp(/\sgain:(\d+\.\d+)/);
+        let match = data.match(gainRegex);
+        if (match) {
+            gainValues.push(Number(match[1]));
+        }
+    }); //.match(/^gain:(\d*.\d*)$/);
+    console.log(gainValues)
+    setStrudelData(gainValues);
     };
 
     const [controlConfig, setControlConfig] = useState({
@@ -136,7 +143,6 @@ export default function StrudelDemo() {
             TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
             setControlConfig(TuneProcessor.createControlDeckConfig());
             setCodeUpdated(false); // Disable refresh on init.
-            console.log(getD3Data())
         }
     }, []);
 
@@ -157,7 +163,7 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                     <div className="col-12">
-                        <Graph data={strudelData}/>
+                        <Visualiser data={strudelData}/>
                         <ControlDeck config={controlConfig} />
                     </div>
                 </div>
