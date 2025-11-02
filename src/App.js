@@ -100,11 +100,11 @@ export default function StrudelDemo() {
     });
 
     let navButtons = [
-        { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: play },
-        { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: refresh, disabled: !codeUpdated },
-        { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: stop },
-        { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: save },
-        { label: <i className="bi bi-upload"></i>, bsPrefix: 'btn btn-dark border border-secondary', onClick: load }
+        { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
+        { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
+        { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
+        { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
+        { label: <i className="bi bi-upload"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: load }
     ];
 
     useEffect(() => {
@@ -153,21 +153,15 @@ export default function StrudelDemo() {
     return (
         <div>
             <main>
-                <div className="container-lg">
-                    <div className="row">
-                        <div className="col-12 border border-5 border-secondary" style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+                <div className="app-wrapper container-xl me-auto">
+                    <div className="row mb-0 p-0">
+                        <div className="col-12 strudel-container p-0">
                             <div id="editor" className='' />
                             {/* <div id="output" /> */}
                         </div>
-                        <div className="col text-center">
-                            <ButtonGroup
-                                size='lg'
-                                buttons={navButtons}
-                            />
-                        </div>
                     </div>
                     <div className="col-12">
-                        <ControlDeck config={controlConfig} visualiserData={strudelData} />
+                        <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
                     </div>
                 </div>
                 <canvas id="roll"></canvas>

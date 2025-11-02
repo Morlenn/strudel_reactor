@@ -15,7 +15,7 @@ export default function InputGroup({ bsPrefix = 'input-group', size = 'size', in
     return (
         <>
             {groupInputs.map((props, index) => {
-                                    return <div><Input {...props} id={`${id}-${index}`}/></div>;
+                                    return <Input {...props} id={`${id}-${index}`}/>;
                                 })}
         </>
     );

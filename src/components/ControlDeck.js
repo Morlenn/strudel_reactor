@@ -4,10 +4,11 @@ import Slider from './Slider';
 import ToggleGroup from './ToggleGroup';
 import ToggleButton from './ToggleButton';
 import Visualiser from './Visualiser';
+import ButtonGroup from './ButtonGroup';
 
 import { useState, useEffect } from 'react';
 
-export default function ControlDeck({ config = {}, visualiserData = [] }) {
+export default function ControlDeck({ config = {}, visualiserData = [], navButtons = [] }) {
 
     const [controlConfig, setControlConfig] = useState(config);
     const [visualData, setVisualData] = useState([visualiserData])
@@ -29,7 +30,7 @@ export default function ControlDeck({ config = {}, visualiserData = [] }) {
         }, [visualiserData]);
 
     return (
-        <div className='control-deck bg-dark border border-secondary border-5 rounded shadow-sm text-white'>
+        <div className='control-deck bg-dark text-white'>
             <Visualiser data={visualData}/>
             <div className='col-12 p-3'>
                 <div className='row'>
@@ -67,12 +68,16 @@ export default function ControlDeck({ config = {}, visualiserData = [] }) {
                         </div>
                     </div>
                     <div className='col-12 col-md-6 col-lg-5'>
-                        <div className='controls-container d-flex justify-content-start flex-wrap text-center border border-3 shadow-sm mb-3 p-2 fs-6 text-uppercase fw-semibold'>
+                        <div className='controls-container control-deck-inner d-flex justify-content-start flex-wrap text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
                             {/* Inputs to be added post render */}
                             <InputGroup inputs={controlConfig.inputs}/>
+                            <ButtonGroup
+                                bsPrefix='btn-group btn-group-lg ms-2 my-2 m-0'
+                                buttons={navButtons}
+                            />
                         </div>
                         
-                        <div className='slider-container d-flex justify-content-center flex-wrap border border-3 shadow-sm pb-3'>
+                        <div className='slider-container control-deck-inner d-flex justify-content-center flex-wrap pb-3'>
                             {/* Slider to control global gain, with disable toggle. */}
                             {controlConfig.sliders.map((slider) => {
                                 return <Slider 

@@ -4,7 +4,7 @@ import { parse } from 'acorn';
 export default class TuneProcessor {
 
     static trackedExpressions = [ 'setcps', 'setcpm' ];
-    static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
+    static sliders = ['gain', 'distort', 'room'];// 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
 
     static init(props) {
         this.globalEditor = props.globalEditor;
@@ -120,14 +120,14 @@ export default class TuneProcessor {
                 input = input.concat(`\n//all(x => x.${slider}(1))`);
             }
         });
-        TuneProcessor.trackedExpressions.forEach((expression) => {
-            if (!input.match(`${expression}\\((.*)\\)`)) {
-                input = input.concat(`\n${expression}()`);
-            } else {
-                let match = input.match(`${expression}\\(.*\\)`);
-                input = input.slice(0, match.index) + input.slice(match[0].length) + `\n${match[0]}`
-            }
-        });
+        // TuneProcessor.trackedExpressions.forEach((expression) => {
+        //     if (!input.match(`${expression}\\((.*)\\)`)) {
+        //         input = input.concat(`\n${expression}()`);
+        //     } else {
+        //         let match = input.match(`${expression}\\(.*\\)`);
+        //         input = input.slice(0, match.index) + input.slice(match[0].length) + `\n${match[0]}`
+        //     }
+        // });
         return input.trimStart();
     }
 
