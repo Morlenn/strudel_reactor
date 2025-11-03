@@ -15,12 +15,12 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
     };
 
     return (
-        <div className='text-center flex-grow-1 d-flex flex-column'>
+        <div className='text-center flex-grow-1'>
             <div className='fs-4 text-uppercase fw-semibold mb-2'>
                 {label}
             </div>
             <BSButtonGroup
-                bsPrefix={'btn-group toggle-group d-block'}
+                bsPrefix={bsPrefix}
                 id={id}
                 size={size}
                 vertical={vertical}

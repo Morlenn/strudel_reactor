@@ -95,11 +95,9 @@ export default function StrudelDemo() {
     };
 
     const save = async (event) => {
-        console.log(event)
         let updatedTunes = tunes;
         if (globalEditor.current && event.saveName) {
             updatedTunes[event.saveName] = globalEditor.current.code;
-            console.log(Object.keys(updatedTunes).at(-1))
             setTunes(updatedTunes);
             setTuneNames(Object.keys(updatedTunes));
             await TuneFileManager.saveTune(updatedTunes);
@@ -125,7 +123,6 @@ export default function StrudelDemo() {
     };
 
     const handleD3Data = (event) => {
-    // console.log(event.detail);
     let strudelData = getD3Data();
     let gainValues = [];
     strudelData.forEach((data) => { 
@@ -181,18 +178,21 @@ export default function StrudelDemo() {
     return (
         <div>
             <main>
-                <div className="app-wrapper container container-lg container-xl mx-auto">
+                <div className="bg-dark m-0 p-2">
                     <div className="row mb-0 p-0">
-                        <div className="col-12 strudel-container p-0">
-                            <div id="editor" className='' />
-                            {/* <div id="output" /> */}
+                        <div className="col-7 pe-0">
+                            <Visualiser data={strudelData}/>
+                            <div className="strudel-container control-deck-inner m-2 p-0">
+                                <div id="editor" className='p-0' />
+                                {/* <div id="output" /> */}
+                            </div>
+                        </div>
+                        <div className="col-5 control-deck-wrapper ps-0">
+                        <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
                         </div>
                     </div>
-                    <div className="col-12 control-deck-wrapper">
-                        <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
-                    </div>
                 </div>
-                <canvas id="roll"></canvas>
+                <canvas id="roll" hidden></canvas>
             </main >
         </div >
     );

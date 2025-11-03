@@ -8,7 +8,6 @@ export default function Visualiser({ data = [] }) {
     useEffect(() => {
             if (data.length) {
                 setStrudelData(data);   
-                console.log(strudelData)
             }
         }, [data]);
 
@@ -69,7 +68,7 @@ export default function Visualiser({ data = [] }) {
     }, [strudelData])
 
     return (
-        <div className="visualiser crt-container control-deck-inner d-flex justify-content-center m-3 p-0">
+        <div className="visualiser crt-container d-flex justify-content-center m-2 p-0">
             <div className="row crt">
                 <svg width="100%" height="100px" className="visualiser-svg p-0"></svg>
             </div>

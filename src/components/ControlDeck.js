@@ -31,15 +31,22 @@ export default function ControlDeck({ config = {}, visualiserData = [], navButto
         }, [visualiserData]);
 
     return (
-        <div className='control-deck bg-dark text-white'>
-            <Visualiser data={visualData}/>
-            <div className='col-12 p-3 pt-0'>
+        <div className='control-deck bg-dark text-white col'>
+            <div className='col-12 p-3 pt-2'>
                 <div className='row'>
-                    <div className='col-12 col-md-6 col-lg-7 p-0'>
-                        <div className='d-flex flex-wrap justify-content-center align-items-stretch gap-5 mb-5'>
+                    <div className='controls-container control-deck-inner d-flex justify-content-start flex-wrap text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
+                        {/* Inputs to be added post render */}
+                        <InputGroup inputs={controlConfig.inputs}/>
+                        <ButtonGroup
+                            bsPrefix='btn-group btn-group-lg ms-2 my-2 m-0'
+                            buttons={navButtons}
+                        />
+                    </div>
+                    <div className='row row-cols-3 row-cols-lg-4 row-cols-xl-5 mt-1 mb-0 ps-2 ms-1'>
                             {/* Sound buttons to be added post render */}
                             {controlConfig.sounds.map((sound, index) => {
-                                return <ToggleButton
+                                return <div className='col mb-5'>
+                                            <ToggleButton
                                                 bsPrefix={'hush-button text-center flex-fill'}
                                                 id={`hush-button-${index+1}`}
                                                 variant=''
@@ -47,33 +54,25 @@ export default function ControlDeck({ config = {}, visualiserData = [], navButto
                                                 onClick={sound.onChange}
                                                 wrapLabel={true}                                
                                             />
+                                        </div>
                             })}
-                        </div>
-                        <div className='d-flex justify-content-center flex-wrap'>
+                    </div>
+                    <div className='row row-cols-1 mb-5'>
                             {/* Variable toggles to be added post render */}
-
-                            {controlConfig.variables.map((variable) => {
+                            <div class="btn-toolbar toggle-group col gap-4">
+                                {controlConfig.variables.map((variable) => {
                                 return <ToggleGroup
-                                            bsPrefix='btn-group toggle-group'
+                                            bsPrefix='btn-group'
                                             label={variable.label}
                                             buttons={variable.buttons}
                                             onChange={(value) => {
                                                 updateCode(controlConfig.globalEditor.code.slice(0, variable.start) + value + controlConfig.globalEditor.code.slice(variable.end));
                                             }}
                                         />
-                            })}
+                                })}
                         </div>
                     </div>
-                    <div className='col-12 col-md-6 col-lg-5'>
-                        <div className='controls-container control-deck-inner d-flex justify-content-start flex-wrap text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
-                            {/* Inputs to be added post render */}
-                            <InputGroup inputs={controlConfig.inputs}/>
-                            <ButtonGroup
-                                bsPrefix='btn-group btn-group-lg ms-2 my-2 m-0'
-                                buttons={navButtons}
-                            />
-                        </div>
-                        
+                    <div className='col-12'>
                         <div className='slider-container control-deck-inner d-flex justify-content-center flex-wrap pb-3'>
                             {/* Slider to control global gain, with disable toggle. */}
                             {controlConfig.sliders.map((slider) => {

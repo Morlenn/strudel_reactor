@@ -2,28 +2,49 @@
   background: #c0c0c0;
 }
 
-.control-deck-wrapper {
-  height: 35vh;
-}
-
-// 3D perspective insperation: https://polypane.app/css-3d-transform-examples/
-.control-deck {
-  transform-origin: top center;
-  transform:
-    perspective(180em)
-    rotateX(18deg)
-    scaleY(0.95)
-    scaleX(0.95);
+.app-wrapper {
   box-shadow:
     rgba(22, 31, 39, 0.42) 0px 60px 123px -25px,
     rgba(19, 26, 32, 0.08) 0px 35px 75px -35px;
   border-radius: 10px;
-  border: 1rem solid;
+  border: 0.8rem solid;
   // border-style: ridge;
   border-color:
     rgb(213, 220, 226)
     rgb(213, 220, 226)
     rgb(184, 194, 204);
+}
+
+.visualiser {
+  background-color: #231d1f;
+  box-shadow:
+    rgba(19, 26, 32, 0.08) 0px 35px 75px -35px;
+  border-radius: 10px;
+  border: 0.3rem solid;
+  border-color:
+    rgb(213, 220, 226)
+    rgb(213, 220, 226)
+    rgb(184, 194, 204);
+}
+
+// 3D perspective insperation: https://polypane.app/css-3d-transform-examples/
+.control-deck {
+  // transform-origin: top center;
+  // transform:
+  //   perspective(180em)
+  //   rotateX(18deg)
+  //   scaleY(0.95)
+  //   scaleX(0.95);
+  // box-shadow:
+  //   rgba(22, 31, 39, 0.42) 0px 60px 123px -25px,
+  //   rgba(19, 26, 32, 0.08) 0px 35px 75px -35px;
+  // border-radius: 10px;
+  // border: 1rem solid;
+  // // border-style: ridge;
+  // border-color:
+  //   rgb(213, 220, 226)
+  //   rgb(213, 220, 226)
+  //   rgb(184, 194, 204);
   // background-color: #141414;
 }
 
@@ -40,36 +61,37 @@
 
 .strudel-container {
   // transform-origin: top center;
-  transform:
-    rotateX(-18deg)
-    scaleX(0.93);
-  box-shadow:
-    rgba(22, 31, 39, 0.42) 0px 60px 123px -25px,
-    rgba(19, 26, 32, 0.08) 0px 35px 75px -35px;
-  border-radius: 10px;
-  border: 0.5rem solid;
-  border-color:
-    rgb(213, 220, 226)
-    rgb(213, 220, 226)
-    rgb(184, 194, 204);
+  // transform:
+  //   rotateX(-18deg)
+  //   scaleX(0.93);
+  position: relative;      
+  overflow: hidden;
+  // box-shadow:
+  //   rgba(22, 31, 39, 0.42) 0px 60px 123px -25px,
+  //   rgba(19, 26, 32, 0.08) 0px 35px 75px -35px;
+  // border-radius: 10px;
+  // border: 0.5rem solid;
+  // border-color:
+  //   rgb(213, 220, 226)
+  //   rgb(213, 220, 226)
+  //   rgb(184, 194, 204);
 }
 
 .strudel-container{
   .cm-editor {
-    height: 45vh;
-    // max-height: 40vh;
+    // height: 45vh;
+    max-height: 80vh;
     overflow-y: auto;
     overflow-x: auto;
   }
 }
 
 /* Hush buttons adapted from Madflows CSS found here: https://uiverse.io/Madflows/terrible-catfish-72 */
-.hush-button,
-.toggle-group > .hush-button {
-  min-width: 50px;
-  max-width: 100px;
-  min-height: 50px;
-  max-height: 100px;
+.hush-button {
+  width: 5.5rem;
+  max-width: 5.5rem;
+  height: 5.5rem;
+  max-height: 5.5rem;
   aspect-ratio: 1 / 1;
   outline: none;
   background: #fff0f0;
@@ -81,11 +103,18 @@
   transition: transform 150ms cubic-bezier(0, 0, 0.58, 1), background 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-transform 150ms cubic-bezier(0, 0, 0.58, 1); 
 }
 
-.toggle-group > .hush-button {
-  width: 100%;
-  height: 100%;
+// .toggle-group {
+//   display: flex;
+//   gap: 0.5rem;
+//   .btn-group {
+//     flex: 1 1 0;
+//     text-align: center;
+    // aspect-ratio: 1 / 1;
+  // width: 100%;
+  // height: 100%;
   // aspect-ratio: 1 / 1;
-}
+// }
+// }
 
 /* Button text CSS */
 .hush-button span {
@@ -165,15 +194,15 @@
 }
 
 /* Unround border on toggle group buttons based on position */
-.toggle-group > .hush-button:first-child {
+.btn-group > .hush-button:first-child {
   border-radius: 0.75em 0 0 0.75em;
 }
 
-.toggle-group > .hush-button:not(:first-child):not(:last-child) {
+.btn-group > .hush-button:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
 
-.toggle-group > :last-child.hush-button {
+.btn-group > :last-child.hush-button {
   border-radius: 0 0.75em 0.75em 0;
 }
 
