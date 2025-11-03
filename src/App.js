@@ -22,6 +22,7 @@ import TuneFileManager from './TuneFileManager';
 import Visualiser from './components/Visualiser';
 import Modal from "./components/Modal";
 import Select from "./components/Select";
+import Input from "./components/Input";
 
 export default function StrudelDemo() {
 
@@ -29,6 +30,7 @@ export default function StrudelDemo() {
     const [strudelData, setStrudelData] = useState([]);
     const [navButtons, setNavButtons] = useState([]);
     const [tunes, setTunes] = useState(undefined);
+    const [tuneNames, setTuneNames] = useState([]);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
 
@@ -92,9 +94,15 @@ export default function StrudelDemo() {
         }
     };
 
-    const save = () => {
-        if (globalEditor.current) {
-            // TODO: Save/load functionality
+    const save = async (event) => {
+        console.log(event)
+        let updatedTunes = tunes;
+        if (globalEditor.current && event.saveName) {
+            updatedTunes[event.saveName] = globalEditor.current.code;
+            console.log(Object.keys(updatedTunes).at(-1))
+            setTunes(updatedTunes);
+            setTuneNames(Object.keys(updatedTunes));
+            await TuneFileManager.saveTune(updatedTunes);
         }
     };
 
@@ -102,11 +110,9 @@ export default function StrudelDemo() {
         let track = tunes[event.trackName];
         if (globalEditor.current && track) {
             globalEditor.current.stop();
-            updateCode(track);
+            track = TuneProcessor.preProcessString(track); // ensure control functions appended
+            globalEditor.current.setCode(track);
             setControlConfig(TuneProcessor.createControlDeckConfig());
-            // document.removeEventListener("d3Data", handleD3Data);
-            // document.getElementById('editor').replaceChildren();
-            // strudelInit(track);
         }
     };
 
@@ -132,8 +138,6 @@ export default function StrudelDemo() {
 
     // Keep values to between 0 and 1
     gainValues = gainValues.map((gain) => Math.min(Math.pow(gain, 1.5), 1));
-
-    console.log(gainValues)
     setStrudelData(gainValues);
     };
 
@@ -146,34 +150,33 @@ export default function StrudelDemo() {
         globalEditor: globalEditor
     });
 
-    // Load in tunes before strudel
+    // Load in tunes then strudel
     useEffect(() => {
         TuneFileManager.init()
             .then(() => {
                 let loadedTunes = TuneFileManager.getTunes();
                 setTunes(loadedTunes);
+                setTuneNames(Object.keys(loadedTunes));
+                if (!hasRun.current) {  
+                    let defaultTune = loadedTunes.stranger_tune;
+                    strudelInit(defaultTune)
+                }
             })
     }, [])
 
     useEffect(() => {
-
-        if (!hasRun.current && tunes) {
-            
-            let defaultTune = tunes.stranger_tune;
-
-            setNavButtons([
-                { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
-                { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
-                { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
-                { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
-                { type: 'modal', launchLabel: <i className="bi bi-upload"></i>, buttonClass: 'btn btn-danger border border-secondary',
-                    header: 'Load Track', body: <Select name='trackName' options={Object.keys(tunes)}/>, onSubmit: load }
-                // <Modal buttonClass='btn btn-danger border border-secondary' launchLabel={<i className="bi bi-upload"></i>}/>
-            ]);
-
-           strudelInit(defaultTune)
-        }
-    }, [tunes]);
+        setNavButtons([
+            { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
+            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
+            { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
+            // { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
+            { type: 'modal', launchLabel: <i className="bi bi-download"></i>, buttonClass: 'btn btn-danger border border-secondary',
+                header: 'Save Track', body: <Input name='saveName' label='Please enter a save name:'/>, onSubmit: save },
+            { type: 'modal', launchLabel: <i className="bi bi-upload"></i>, buttonClass: 'btn btn-danger border border-secondary',
+                header: 'Load Track', body: <Select name='trackName' options={tuneNames}/>, onSubmit: load }
+            // <Modal buttonClass='btn btn-danger border border-secondary' launchLabel={<i className="bi bi-upload"></i>}/>
+        ]);
+    }, [tuneNames])
 
     return (
         <div>

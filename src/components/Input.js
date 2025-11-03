@@ -1,7 +1,7 @@
 import Form from 'react-bootstrap/Form';
 import { useState } from 'react';
 
-export default function Input({ bsPrefix = 'form-control', type = 'text', id = '', value = '', placeholder = '', size = '', label = '', onChange = () => {}  }) {
+export default function Input({ bsPrefix = 'form-control', type = 'text', id = '', name = '', value = '', placeholder = '', size = '', label = '', onChange = () => {}  }) {
 
       const [inputValue, setValue] = useState(value);
       const [inputPlaceholder, setPlaceholder] = useState(placeholder);
@@ -24,6 +24,7 @@ export default function Input({ bsPrefix = 'form-control', type = 'text', id = '
           bsPrefix={bsPrefix}
           type={type}
           id={id}
+          name={name}
           value={inputValue}
           placeholder={inputPlaceholder}
           size={size}

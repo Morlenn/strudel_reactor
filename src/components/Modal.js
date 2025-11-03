@@ -13,7 +13,6 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
         event.preventDefault();
         let form = new FormData(event.target)
         let formData = Object.fromEntries(form.entries());
-
         if (onSubmit) {
             onSubmit(formData);
         }
@@ -41,8 +40,8 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
                         {body}
                     </BSModal.Body>
                     <BSModal.Footer>
-                        <Button variant='secondary' onClick={handleClose}>Cancel</Button>
                         <Button type='submit'>Submit</Button>
+                        <Button variant='secondary' onClick={handleClose}>Cancel</Button>
                     </BSModal.Footer>
                 </Form>
             </BSModal>

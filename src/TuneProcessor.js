@@ -128,6 +128,10 @@ export default class TuneProcessor {
         //         input = input.slice(0, match.index) + input.slice(match[0].length) + `\n${match[0]}`
         //     }
         // });
+        // Add logging for visualiser if needed
+        if (!input.match(/all\(x => x.log\(\)\)/)) {
+            input = input.concat('\nall(x => x.log())');
+        }
         return input.trimStart();
     }
 
