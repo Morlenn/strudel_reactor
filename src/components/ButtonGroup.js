@@ -1,5 +1,6 @@
 import BSButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from './Button';
+import Modal from './Modal';
 import { useId } from 'react';
 
 export default function ButtonGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = []}) {
@@ -13,6 +14,9 @@ export default function ButtonGroup({ bsPrefix = 'btn-group', size = '', vertica
             vertical={vertical}
         >
             {buttons.map((props, index) => {
+                if (props?.type === 'modal') {
+                    return <Modal {...props} />
+                }
                 return <Button {...props} id={`${id}-${index}`}/>;
             })}
         </BSButtonGroup>

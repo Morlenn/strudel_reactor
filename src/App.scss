@@ -2,6 +2,10 @@
   background: #c0c0c0;
 }
 
+.control-deck-wrapper {
+  height: 35vh;
+}
+
 // 3D perspective insperation: https://polypane.app/css-3d-transform-examples/
 .control-deck {
   transform-origin: top center;
@@ -52,16 +56,21 @@
 
 .strudel-container{
   .cm-editor {
-    max-height: 40vh;
+    height: 45vh;
+    // max-height: 40vh;
     overflow-y: auto;
     overflow-x: auto;
   }
 }
 
 /* Hush buttons adapted from Madflows CSS found here: https://uiverse.io/Madflows/terrible-catfish-72 */
-.hush-button {
-  width: 100px;
-  height: 100px;
+.hush-button,
+.toggle-group > .hush-button {
+  min-width: 50px;
+  max-width: 100px;
+  min-height: 50px;
+  max-height: 100px;
+  aspect-ratio: 1 / 1;
   outline: none;
   background: #fff0f0;
   border: 2px solid #b18597;
@@ -70,6 +79,12 @@
   transform-style: preserve-3d;
   -webkit-transition: background 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-transform 150ms cubic-bezier(0, 0, 0.58, 1);
   transition: transform 150ms cubic-bezier(0, 0, 0.58, 1), background 150ms cubic-bezier(0, 0, 0.58, 1), -webkit-transform 150ms cubic-bezier(0, 0, 0.58, 1); 
+}
+
+.toggle-group > .hush-button {
+  width: 100%;
+  height: 100%;
+  // aspect-ratio: 1 / 1;
 }
 
 /* Button text CSS */
@@ -150,15 +165,15 @@
 }
 
 /* Unround border on toggle group buttons based on position */
-.toggle-group > :first-child > .hush-button {
+.toggle-group > .hush-button:first-child {
   border-radius: 0.75em 0 0 0.75em;
 }
 
-.toggle-group > :not(:first-child):not(:last-child) > .hush-button {
+.toggle-group > .hush-button:not(:first-child):not(:last-child) {
   border-radius: 0;
 }
 
-.toggle-group > :last-child > .hush-button {
+.toggle-group > :last-child.hush-button {
   border-radius: 0 0.75em 0.75em 0;
 }
 
@@ -172,7 +187,7 @@
 
 .range {
     accent-color: #dc3545;
-    height: 180px;
+    max-height: 180px;
 }
 
 .range-vertical {
@@ -430,7 +445,8 @@
   pointer-events: none;
   animation: flicker 0.15s infinite;
 }
-.crt::before {
+.crt::before,
+.strudel-container::before {
   content: " ";
   display: block;
   position: absolute;

@@ -15,20 +15,19 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
     };
 
     return (
-        <div className='text-center'>
+        <div className='text-center flex-grow-1 d-flex flex-column'>
             <div className='fs-4 text-uppercase fw-semibold mb-2'>
                 {label}
             </div>
             <BSButtonGroup
-                bsPrefix={bsPrefix}
+                bsPrefix={'btn-group toggle-group d-block'}
                 id={id}
                 size={size}
                 vertical={vertical}
                 >
                 {buttons.map((props, index) => {
 
-                    return <div className='col'>
-                            <ToggleGroupButton
+                    return <ToggleGroupButton
                                 id={`${props.label}-button-${index+1}`}
                                 value={index}
                                 variant=''
@@ -36,7 +35,7 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
                                 label={props.label}
                                 onClick={() => toggleSelected(`${index}`)}
                             />
-                        </div>
+                       
                 })}
             </BSButtonGroup>
         </div>

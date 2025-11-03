@@ -1,0 +1,69 @@
+import { useState } from 'react';
+import BSModal from 'react-bootstrap/Modal';
+import { Form, Button } from 'react-bootstrap';
+
+export default function Modal({ buttonClass = '', launchLabel = '', header = '', body = '', onSubmit = () => {} }) {
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        let form = new FormData(event.target)
+        let formData = Object.fromEntries(form.entries());
+
+        if (onSubmit) {
+            onSubmit(formData);
+        }
+        handleClose();
+    }
+
+    return (
+        <>
+            <Button bsPrefix={buttonClass} onClick={handleShow}>
+                {launchLabel}
+            </Button>
+            <BSModal 
+            size="lg"
+            centered
+            show={show}
+            onHide={handleClose}
+            >
+                <BSModal.Header closeButton>
+                    <BSModal.Title>
+                        {header}
+                    </BSModal.Title>
+                </BSModal.Header>
+                <Form onSubmit={handleSubmit}>
+                    <BSModal.Body>
+                        {body}
+                    </BSModal.Body>
+                    <BSModal.Footer>
+                        <Button variant='secondary' onClick={handleClose}>Cancel</Button>
+                        <Button type='submit'>Submit</Button>
+                    </BSModal.Footer>
+                </Form>
+            </BSModal>
+        </>
+        
+    );
+}
+
+// function App() {
+//   const [modalShow, setModalShow] = useState(false);
+
+//   return (
+//     <>
+//       <Button variant="primary" onClick={() => setModalShow(true)}>
+//         Launch vertically centered modal
+//       </Button>
+
+//       <MyVerticallyCenteredModal
+//         show={modalShow}
+//         onHide={() => setModalShow(false)}
+//       />
+//     </>
+//   );
+// }

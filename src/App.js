@@ -9,7 +9,7 @@ import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
 import TuneProcessor from './TuneProcessor';
-import { stranger_tune, bergheini, finance, euclid } from './tunes';
+// import { stranger_tune, bergheini, finance, euclid } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import CheckBox from './components/CheckBox';
 import ButtonGroup from './components/ButtonGroup';
@@ -20,15 +20,56 @@ import PostRenderElements from './components/PostRenderElements';
 import ControlDeck from './components/ControlDeck';
 import TuneFileManager from './TuneFileManager';
 import Visualiser from './components/Visualiser';
+import Modal from "./components/Modal";
+import Select from "./components/Select";
 
 export default function StrudelDemo() {
 
     const [codeUpdated, setCodeUpdated] = useState(false);
     const [strudelData, setStrudelData] = useState([]);
-    TuneFileManager.init();
-    // console.log(TuneFileManager.getTunes())
+    const [navButtons, setNavButtons] = useState([]);
+    const [tunes, setTunes] = useState(undefined);
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
+
+    const strudelInit = (selectedTrack) => {
+        let inputCode = TuneProcessor.preProcessString(selectedTrack);
+        document.addEventListener("d3Data", handleD3Data);
+        console_monkey_patch();
+        hasRun.current = true;
+        //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
+        //init canvas
+        const canvas = document.getElementById('roll');
+        canvas.width = canvas.width * 2;
+        canvas.height = canvas.height * 2;
+        const drawContext = canvas.getContext('2d');
+        const drawTime = [-2, 2]; // time window of drawn haps
+        globalEditor.current = new StrudelMirror({
+            defaultOutput: webaudioOutput,
+            getTime: () => getAudioContext().currentTime,
+            transpiler,
+            root: document.getElementById('editor'),
+            // TODO: Change tune by selection.
+            initialCode: inputCode,
+            drawTime,
+            onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
+            prebake: async () => {
+                initAudioOnFirstClick(); // needed to make the browser happy (don't await this here..)
+                const loadModules = evalScope(
+                    import('@strudel/core'),
+                    import('@strudel/draw'),
+                    import('@strudel/mini'),
+                    import('@strudel/tonal'),
+                    import('@strudel/webaudio'),
+                );
+                await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
+            },
+        });
+
+        TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
+        setControlConfig(TuneProcessor.createControlDeckConfig());
+        setCodeUpdated(false); // Disable refresh on init.
+    };
 
     const play = () => {
         if (globalEditor.current) {
@@ -57,9 +98,15 @@ export default function StrudelDemo() {
         }
     };
 
-    const load = () => {
-        if (globalEditor.current) {
-            // TODO: Save/load functionality
+    const load = (event) => {
+        let track = tunes[event.trackName];
+        if (globalEditor.current && track) {
+            globalEditor.current.stop();
+            updateCode(track);
+            setControlConfig(TuneProcessor.createControlDeckConfig());
+            // document.removeEventListener("d3Data", handleD3Data);
+            // document.getElementById('editor').replaceChildren();
+            // strudelInit(track);
         }
     };
 
@@ -99,68 +146,46 @@ export default function StrudelDemo() {
         globalEditor: globalEditor
     });
 
-    let navButtons = [
-        { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
-        { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
-        { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
-        { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
-        { label: <i className="bi bi-upload"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: load }
-    ];
+    // Load in tunes before strudel
+    useEffect(() => {
+        TuneFileManager.init()
+            .then(() => {
+                let loadedTunes = TuneFileManager.getTunes();
+                setTunes(loadedTunes);
+            })
+    }, [])
 
     useEffect(() => {
 
-        if (!hasRun.current) {
-            let inputCode = TuneProcessor.preProcessString(stranger_tune);
+        if (!hasRun.current && tunes) {
+            
+            let defaultTune = tunes.stranger_tune;
 
-            document.addEventListener("d3Data", handleD3Data);
-            console_monkey_patch();
-            hasRun.current = true;
-            //Code copied from example: https://codeberg.org/uzu/strudel/src/branch/main/examples/codemirror-repl
-            //init canvas
-            const canvas = document.getElementById('roll');
-            canvas.width = canvas.width * 2;
-            canvas.height = canvas.height * 2;
-            const drawContext = canvas.getContext('2d');
-            const drawTime = [-2, 2]; // time window of drawn haps
-            globalEditor.current = new StrudelMirror({
-                defaultOutput: webaudioOutput,
-                getTime: () => getAudioContext().currentTime,
-                transpiler,
-                root: document.getElementById('editor'),
-                // TODO: Change tune by selection.
-                initialCode: inputCode,
-                drawTime,
-                onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
-                prebake: async () => {
-                    initAudioOnFirstClick(); // needed to make the browser happy (don't await this here..)
-                    const loadModules = evalScope(
-                        import('@strudel/core'),
-                        import('@strudel/draw'),
-                        import('@strudel/mini'),
-                        import('@strudel/tonal'),
-                        import('@strudel/webaudio'),
-                    );
-                    await Promise.all([loadModules, registerSynthSounds(), registerSoundfonts()]);
-                },
-            });
+            setNavButtons([
+                { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
+                { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
+                { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
+                { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
+                { type: 'modal', launchLabel: <i className="bi bi-upload"></i>, buttonClass: 'btn btn-danger border border-secondary',
+                    header: 'Load Track', body: <Select name='trackName' options={Object.keys(tunes)}/>, onSubmit: load }
+                // <Modal buttonClass='btn btn-danger border border-secondary' launchLabel={<i className="bi bi-upload"></i>}/>
+            ]);
 
-            TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
-            setControlConfig(TuneProcessor.createControlDeckConfig());
-            setCodeUpdated(false); // Disable refresh on init.
+           strudelInit(defaultTune)
         }
-    }, []);
+    }, [tunes]);
 
     return (
         <div>
             <main>
-                <div className="app-wrapper container-xl me-auto">
+                <div className="app-wrapper container container-lg container-xl mx-auto">
                     <div className="row mb-0 p-0">
                         <div className="col-12 strudel-container p-0">
                             <div id="editor" className='' />
                             {/* <div id="output" /> */}
                         </div>
                     </div>
-                    <div className="col-12">
+                    <div className="col-12 control-deck-wrapper">
                         <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
                     </div>
                 </div>
