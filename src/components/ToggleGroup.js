@@ -28,6 +28,7 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
                 {buttons.map((props, index) => {
 
                     return <ToggleGroupButton
+                                key={`toggle-${props.label}-${index}`}
                                 id={`${props.label}-button-${index+1}`}
                                 value={index}
                                 variant=''

@@ -1,5 +1,3 @@
-// import './App.scss';
-// import "bootstrap-icons/font/bootstrap-icons.css";
 import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
 import { evalScope } from '@strudel/core';
@@ -9,7 +7,6 @@ import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
 import TuneProcessor from './TuneProcessor';
-// import { stranger_tune, bergheini, finance, euclid } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import ControlDeck from './components/ControlDeck';
 import TuneFileManager from './TuneFileManager';
@@ -132,6 +129,7 @@ export default function StrudelDemo() {
     };
 
     const [controlConfig, setControlConfig] = useState({
+        configID: 'init',
         inputs: [],
         sounds: [],
         variables: [],

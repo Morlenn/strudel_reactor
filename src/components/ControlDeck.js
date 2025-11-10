@@ -29,6 +29,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                 <div className='row'>
                     <div className='controls-container control-deck-inner d-flex justify-content-center text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
                         <ButtonGroup
+                            key={`${controlConfig.configID}-navbuttons`}
                             bsPrefix='btn-group btn-group-lg flex-grow-2 w-75 m-1'
                             buttons={navButtons}
                         />
@@ -36,7 +37,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                     <div className='row row-cols-3 row-cols-lg-4 row-cols-xl-5 mt-1 mb-0 ps-2 ms-1'>
                             {/* Sound buttons to be added post render */}
                             {controlConfig.sounds.map((sound, index) => {
-                                return <div className='col mb-5'>
+                                return <div className='col mb-5' key={`${controlConfig.configID}-toggle-button-${index}`}>
                                             <ToggleButton
                                                 bsPrefix={'hush-button text-center flex-fill'}
                                                 id={`hush-button-${index+1}`}
@@ -50,9 +51,10 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                     </div>
                     <div className='row row-cols-1 mb-5'>
                             {/* Variable toggles to be added post render */}
-                            <div class="btn-toolbar toggle-group col gap-4">
-                                {controlConfig.variables.map((variable) => {
+                            <div className="btn-toolbar toggle-group col gap-4">
+                                {controlConfig.variables.map((variable, index) => {
                                 return <ToggleGroup
+                                            key={`${controlConfig.configID}-toggle-group-${index}`}
                                             bsPrefix='btn-group'
                                             label={variable.label}
                                             buttons={variable.buttons}
@@ -66,8 +68,9 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                     <div className='col-12'>
                         <div className='slider-container control-deck-inner d-flex justify-content-center flex-wrap pb-3'>
                             {/* Slider to control global gain, with disable toggle. */}
-                            {controlConfig.sliders.map((slider) => {
+                            {controlConfig.sliders.map((slider, index) => {
                                 return <Slider 
+                                            key={`${controlConfig.configID}-slider-${index}`}
                                             addClass='m-3 mx-5'
                                             min='0'
                                             max='2'

@@ -15,9 +15,9 @@ export default function ButtonGroup({ bsPrefix = 'btn-group', size = '', vertica
         >
             {buttons.map((props, index) => {
                 if (props?.type === 'modal') {
-                    return <Modal {...props} />
+                    return <Modal {...props} key={`${id}-modal-${index}`}/>
                 }
-                return <Button {...props} id={`${id}-${index}`}/>;
+                return <Button {...props} id={`${id}-${index}`} key={`${id}-button-${index}`}/>;
             })}
         </BSButtonGroup>
     );

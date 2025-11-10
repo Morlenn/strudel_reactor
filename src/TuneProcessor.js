@@ -5,6 +5,7 @@ export default class TuneProcessor {
 
     // static trackedExpressions = [ 'setcps', 'setcpm' ];
     static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
+    static configCounter = 0;
 
     static init(props) {
         this.globalEditor = props.globalEditor;
@@ -14,6 +15,7 @@ export default class TuneProcessor {
     static createControlDeckConfig() {
         let controlDeckObjects = TuneProcessor.processInputString(this.globalEditor.code);
         let controlDeckConfig = {
+            configID: TuneProcessor.configCounter,
             sliders: [],
             sounds: [],
             variables: [],
@@ -21,11 +23,48 @@ export default class TuneProcessor {
             globalEditor: this.globalEditor
         }
 
-        // Create slider configs.
+        // Create a slider for CPM or CPS
+        let cycleLabel;
+        if (this.globalEditor.code.match(`setcpm\\((.*)\\)`)) {
+            cycleLabel = 'cpm';
+        } else if (this.globalEditor.code.match(`setcps\\((.*)\\)`)) {
+            cycleLabel = 'cps';
+        }
+        
+        let cycleRegex = new RegExp(`set${cycleLabel}\\(([^*]+?)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
+        let cycleMatch = this.globalEditor.code.match(cycleRegex);
+        console.log(cycleMatch)
+        if (cycleMatch) {
+            controlDeckConfig.sliders.push({
+                    label: cycleLabel.toUpperCase(),
+                    disabled: true,
+                    vertical: true,
+                    onChange: (newValue) => {
+                        this.updateCode(this.globalEditor.code.replace(cycleRegex, 
+                            (match, value) => `set${cycleLabel}(${value} * ${newValue})`));
+                    },
+                    toggle: {
+                        bsPrefix: 'btn btn-danger glow-small',
+                        size: 'sm',
+                        onChange: (enabled, sliderValue) => {
+                            // Disabled code.
+                            if (!enabled) {
+                                this.updateCode(this.globalEditor.code.replace(cycleRegex, 
+                                    (match, value) => `set${cycleLabel}(${value} * ${sliderValue})`));
+                            } else {
+                                // Enable code.
+                                this.updateCode(this.globalEditor.code.replace(cycleRegex, 
+                                    (match, value) => `set${cycleLabel}(${value} * 1)`));
+                            }
+                        }
+                    }
+                });
+        }
+
+        // Create dynamic slider configs.
         TuneProcessor.sliders.map((slider) => {
             let sliderRegx = new RegExp(`\\.${slider}\\((\\d*\\.?\\d+)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
             let matches = [...this.globalEditor.code.matchAll(sliderRegx)];
-            console.log(matches)
             if (matches.length) {
                 controlDeckConfig.sliders.push({
                     label: slider.charAt(0).toUpperCase() + slider.slice(1),
@@ -86,10 +125,18 @@ export default class TuneProcessor {
                 end: variable.end
             };
         });
+
+        TuneProcessor.configCounter++;
         return controlDeckConfig;
     }
 
     static preProcessString(input) {
+
+        // set a default CPS for slider, if not already present.
+        if (!input.match(`setcpm\\((.*)\\)`) && !input.match(`setcps\\((.*)\\)`)) {
+            input = input.concat('\nsetcpm(30)');
+        } 
+
         // Add logging for visualiser if needed
         if (!input.match(/all\(x => x.log\(\)\)/)) {
             input = input.concat('\nall(x => x.log())');
