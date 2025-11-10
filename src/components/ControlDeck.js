@@ -25,7 +25,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
 
     return (
         <div className='control-deck bg-dark text-white col'>
-            <div className='col-12 p-3 pt-2'>
+            <div className='col-12 p-3 pb-0 pt-2'>
                 <div className='row'>
                     <div className='controls-container control-deck-inner d-flex justify-content-center text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
                         <ButtonGroup

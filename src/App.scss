@@ -59,13 +59,22 @@
     rgb(184, 194, 204);
 }
 
+// .editor-wrapper {
+  // height: 100%;           /* fill flex container */
+  // overflow: scroll;       /* show both scrollbars always */
+  // box-sizing: border-box; /* include padding in height */
+// }
+
+
 .strudel-container {
   // transform-origin: top center;
   // transform:
   //   rotateX(-18deg)
   //   scaleX(0.93);
   position: relative;      
-  overflow: hidden;
+  overflow: auto;
+  // overflow-y: scroll;
+  // overflow-x: scroll;
   // box-shadow:
   //   rgba(22, 31, 39, 0.42) 0px 60px 123px -25px,
   //   rgba(19, 26, 32, 0.08) 0px 35px 75px -35px;
@@ -79,10 +88,8 @@
 
 .strudel-container{
   .cm-editor {
-    // height: 45vh;
-    max-height: 87vh;
-    overflow-y: auto;
-    overflow-x: auto;
+    height: 100%;
+    overflow: scroll;
   }
 }
 
@@ -204,14 +211,6 @@
 
 .btn-group > :last-child.hush-button {
   border-radius: 0 0.75em 0.75em 0;
-}
-
-// Set width of text inputs.
-.controls-container {
-   input {
-    width: 100px;
-    margin: 0 0.5rem 0.3rem 0.5rem;
-   }
 }
 
 .range {

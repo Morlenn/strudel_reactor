@@ -36,7 +36,7 @@ export default function Visualiser({ data = [] }) {
         // Create xScale
         let xScale = d3.scaleLinear()
             .domain([0, Math.max(strudelData.length - 1, 1)])
-            .range([xPadding, w + xPadding])
+            .range([xPadding, w - xPadding])
 
         let chartGroup = svg.select('.chartGroup');
 

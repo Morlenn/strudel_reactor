@@ -169,17 +169,19 @@ export default function StrudelDemo() {
     return (
         <div>
             <main>
-                <div className="bg-dark m-0 p-2">
-                    <div className="row mb-0 p-0">
-                        <div className="col-7 pe-0">
-                            <Visualiser data={strudelData}/>
-                            <div className="strudel-container control-deck-inner m-2 p-0">
-                                <div id="editor" className='p-0' />
+                <div className="bg-dark m-0 p-0">
+                    <div className="row m-0 p-0">
+                        <div className="d-flex flex-column vh-100 p-2 col-12 col-md-7 col-xl-6 col-xxl-7 pe-0">
+                            <div class="flex-grow-0">
+                                <Visualiser data={strudelData}/>
+                            </div>
+                            <div className="strudel-container flex-grow-1 control-deck-inner m-2 p-0">
+                                <div id="editor" className='p-0 w-100 h-100' />
                                 <canvas id="roll" hidden></canvas>
                                 {/* <div id="output" /> */}
                             </div>
                         </div>
-                        <div className="col-5 control-deck-wrapper ps-0">
+                        <div className="col-12 col-md-5 col-xl-6 col-xxl-5 p-2 control-deck-wrapper ps-0">
                         <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
                         </div>
                     </div>
