@@ -11,16 +11,9 @@ import { registerSoundfonts } from '@strudel/soundfonts';
 import TuneProcessor from './TuneProcessor';
 // import { stranger_tune, bergheini, finance, euclid } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
-import CheckBox from './components/CheckBox';
-import ButtonGroup from './components/ButtonGroup';
-import ToggleGroup from './components/ToggleGroup';
-import InputGroup from './components/InputGroup';
-import Slider from './components/Slider';
-import PostRenderElements from './components/PostRenderElements';
 import ControlDeck from './components/ControlDeck';
 import TuneFileManager from './TuneFileManager';
 import Visualiser from './components/Visualiser';
-import Modal from "./components/Modal";
 import Select from "./components/Select";
 import Input from "./components/Input";
 
@@ -163,17 +156,17 @@ export default function StrudelDemo() {
 
     useEffect(() => {
         setNavButtons([
-            { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
-            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
-            { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
+            { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play, tooltip: 'Play' },
+            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated, tooltip: 'Update' },
+            { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop, tooltip: 'Stop' },
             // { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
             { type: 'modal', launchLabel: <i className="bi bi-download"></i>, buttonClass: 'btn btn-danger border border-secondary',
-                header: 'Save Track', body: <Input name='saveName' label='Please enter a save name:'/>, onSubmit: save },
+                header: 'Save Track', body: <Input name='saveName' label='Please enter a save name:'/>, onSubmit: save, tooltip: 'Save' },
             { type: 'modal', launchLabel: <i className="bi bi-upload"></i>, buttonClass: 'btn btn-danger border border-secondary',
-                header: 'Load Track', body: <Select name='trackName' options={tuneNames}/>, onSubmit: load }
+                header: 'Load Track', body: <Select name='trackName' options={tuneNames}/>, onSubmit: load, tooltip: 'Load' }
             // <Modal buttonClass='btn btn-danger border border-secondary' launchLabel={<i className="bi bi-upload"></i>}/>
         ]);
-    }, [tuneNames])
+    }, [tuneNames, codeUpdated])
 
     return (
         <div>
@@ -184,6 +177,7 @@ export default function StrudelDemo() {
                             <Visualiser data={strudelData}/>
                             <div className="strudel-container control-deck-inner m-2 p-0">
                                 <div id="editor" className='p-0' />
+                                <canvas id="roll" hidden></canvas>
                                 {/* <div id="output" /> */}
                             </div>
                         </div>
@@ -192,7 +186,7 @@ export default function StrudelDemo() {
                         </div>
                     </div>
                 </div>
-                <canvas id="roll" hidden></canvas>
+                
             </main >
         </div >
     );

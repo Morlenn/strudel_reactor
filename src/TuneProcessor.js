@@ -3,8 +3,8 @@ import { parse } from 'acorn';
 // TODO: Sort node processing so some nodes are process
 export default class TuneProcessor {
 
-    static trackedExpressions = [ 'setcps', 'setcpm' ];
-    static sliders = ['gain', 'distort', 'room'];// 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
+    // static trackedExpressions = [ 'setcps', 'setcpm' ];
+    static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
 
     static init(props) {
         this.globalEditor = props.globalEditor;
@@ -150,16 +150,16 @@ export default class TuneProcessor {
         let variableLookup = [];
         ast.body.forEach((node) => {
             // Process controls such as: setcps, gain
-            if (node.type === 'ExpressionStatement') {
-                let callName = node.expression.callee.name;
-                if (TuneProcessor.trackedExpressions.includes(callName)) {
-                    let fullMatchedString = this.globalEditor.code.slice(node.start, node.end)
-                    let controlValue = fullMatchedString ? fullMatchedString.match(/\((.*?)\)/) : '';
-                    if (controlValue) {
-                        controlDeckObjects.controls.push({ label: callName, start: node.start, end: node.end, value: controlValue[1] });
-                    }
-                }
-            }
+            // if (node.type === 'ExpressionStatement') {
+            //     let callName = node.expression.callee.name;
+            //     if (TuneProcessor.trackedExpressions.includes(callName)) {
+            //         let fullMatchedString = this.globalEditor.code.slice(node.start, node.end)
+            //         let controlValue = fullMatchedString ? fullMatchedString.match(/\((.*?)\)/) : '';
+            //         if (controlValue) {
+            //             controlDeckObjects.controls.push({ label: callName, start: node.start, end: node.end, value: controlValue[1] });
+            //         }
+            //     }
+            // }
             // Labeled sounds.
             if (node.type === 'LabeledStatement') {
                 controlDeckObjects.sounds.push({ label: node.label.name, start: node.start, end: node.end})

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import BSModal from 'react-bootstrap/Modal';
 import { Form, Button } from 'react-bootstrap';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 
-export default function Modal({ buttonClass = '', launchLabel = '', header = '', body = '', onSubmit = () => {} }) {
+export default function Modal({ buttonClass = '', launchLabel = '', header = '', body = '', tooltip = '', onSubmit = () => {} }) {
 
     const [show, setShow] = useState(false);
 
@@ -19,35 +21,72 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
         handleClose();
     }
 
-    return (
-        <>
-            <Button bsPrefix={buttonClass} onClick={handleShow}>
-                {launchLabel}
-            </Button>
-            <BSModal 
-            size="lg"
-            centered
-            show={show}
-            onHide={handleClose}
-            >
-                <BSModal.Header closeButton>
-                    <BSModal.Title>
-                        {header}
-                    </BSModal.Title>
-                </BSModal.Header>
-                <Form onSubmit={handleSubmit}>
-                    <BSModal.Body>
-                        {body}
-                    </BSModal.Body>
-                    <BSModal.Footer>
-                        <Button type='submit'>Submit</Button>
-                        <Button variant='secondary' onClick={handleClose}>Cancel</Button>
-                    </BSModal.Footer>
-                </Form>
-            </BSModal>
-        </>
-        
-    );
+    if (!tooltip) {
+            return (
+                <>
+                    <Button bsPrefix={buttonClass} onClick={handleShow}>
+                        {launchLabel}
+                    </Button>
+                    <BSModal 
+                    size="lg"
+                    centered
+                    show={show}
+                    onHide={handleClose}
+                    >
+                        <BSModal.Header closeButton>
+                            <BSModal.Title>
+                                {header}
+                            </BSModal.Title>
+                        </BSModal.Header>
+                        <Form onSubmit={handleSubmit}>
+                            <BSModal.Body>
+                                {body}
+                            </BSModal.Body>
+                            <BSModal.Footer>
+                                <Button type='submit'>Submit</Button>
+                                <Button variant='secondary' onClick={handleClose}>Cancel</Button>
+                            </BSModal.Footer>
+                        </Form>
+                    </BSModal>
+                </>
+            )
+        }
+        return (
+                <>
+                    <OverlayTrigger
+                    placement='top'
+                    delay={{ show: 250, hide: 400 }}
+                    overlay={
+                        <Tooltip >{tooltip}</Tooltip>
+                    }
+                    >
+                        <Button bsPrefix={buttonClass} onClick={handleShow}>
+                            {launchLabel}
+                        </Button>
+                    </OverlayTrigger>
+                    <BSModal 
+                    size="lg"
+                    centered
+                    show={show}
+                    onHide={handleClose}
+                    >
+                        <BSModal.Header closeButton>
+                            <BSModal.Title>
+                                {header}
+                            </BSModal.Title>
+                        </BSModal.Header>
+                        <Form onSubmit={handleSubmit}>
+                            <BSModal.Body>
+                                {body}
+                            </BSModal.Body>
+                            <BSModal.Footer>
+                                <Button type='submit'>Submit</Button>
+                                <Button variant='secondary' onClick={handleClose}>Cancel</Button>
+                            </BSModal.Footer>
+                        </Form>
+                    </BSModal>
+                </> 
+        );
 }
 
 // function App() {

@@ -9,10 +9,9 @@ import Modal from './Modal';
 import { useState, useEffect } from 'react';
 
 
-export default function ControlDeck({ config = {}, visualiserData = [], navButtons = [] }) {
+export default function ControlDeck({ config = {}, navButtons = [] }) {
 
     const [controlConfig, setControlConfig] = useState(config);
-    const [visualData, setVisualData] = useState([visualiserData])
 
     const updateCode = (updatedCode) => {
         controlConfig.updateCode(updatedCode);
@@ -23,12 +22,6 @@ export default function ControlDeck({ config = {}, visualiserData = [], navButto
                 setControlConfig(config);
             }
         }, [config]);
-
-    useEffect(() => {
-            if (visualiserData.length) {
-                setVisualData(visualiserData);
-            }
-        }, [visualiserData]);
 
     return (
         <div className='control-deck bg-dark text-white col'>
