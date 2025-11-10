@@ -3,8 +3,9 @@ import { parse } from 'acorn';
 // TODO: Sort node processing so some nodes are process
 export default class TuneProcessor {
 
-    static trackedExpressions = [ 'setcps', 'setcpm' ];
-    static sliders = ['gain', 'distort', 'room'];// 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
+    // static trackedExpressions = [ 'setcps', 'setcpm' ];
+    static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
+    static configCounter = 0;
 
     static init(props) {
         this.globalEditor = props.globalEditor;
@@ -14,7 +15,7 @@ export default class TuneProcessor {
     static createControlDeckConfig() {
         let controlDeckObjects = TuneProcessor.processInputString(this.globalEditor.code);
         let controlDeckConfig = {
-            inputs: [],
+            configID: TuneProcessor.configCounter,
             sliders: [],
             sounds: [],
             variables: [],
@@ -22,62 +23,75 @@ export default class TuneProcessor {
             globalEditor: this.globalEditor
         }
 
-        // Create global input configs.
-        controlDeckConfig.inputs = controlDeckObjects.controls.map((control) => {
-            // Comment out any controls with nullish values.
-            if (!control.value) {
-                this.updateCode(this.globalEditor.code.slice(0, control.start) + '//' + this.globalEditor.code.slice(control.start));
-            }
-
-            return {
-                bsPrefix: 'form-control border border-2 border-danger',
-                value: control.value,
-                label: control.label,
-                onChange: (currentValue, newValue) => {
-                    if (newValue) {
-                        // Replace value and/or remove slashes to uncomment
-                        let updateRegex = new RegExp(`(?:\\/\\/)?${control.label}\\(.*\\)`);
-                        let match = this.globalEditor.code.match(updateRegex);
-                        this.updateCode(this.globalEditor.code.replace(match[0], `${control.label}(${newValue})`));
-                    } else {
-                        // Comment out input to prevent errors.
-                        this.updateCode(this.globalEditor.code.replace(`${control.label}(${currentValue})`, `//${control.label}(${newValue})`));
-                    }
-                    
-                }
-            };
-        })
-
-        // Create slider configs.
-        controlDeckConfig.sliders = TuneProcessor.sliders.map((slider) => {
-            return {
-                label: slider.charAt(0).toUpperCase() + slider.slice(1),
-                disabled: true,
-                vertical: true,
-                onChange: (oldValue, newValue) => {
-                    this.updateCode(this.globalEditor.code.replace(`all(x => x.${slider}(${oldValue}))`, `all(x => x.${slider}(${newValue}))`));
-                },
-                toggle: {
-                    bsPrefix: 'btn btn-danger glow-small',
-                    size: 'sm',
-                    onChange: () => {
-                        // Pattern matches global control.
-                        let gainRegex = `all\\(x => x\\.${slider}\\([0-9]*[.]?[0-9]+\\)\\)`;
-                        let match = this.globalEditor.code.match(`//${gainRegex}`);
-
-                        // Disabled code.
-                        if (match) {
-                            this.updateCode(this.globalEditor.code.replace(match[0], `${match[0].slice(2)}`)); 
-                        } else {
-                            // Enable code.
-                            let match = this.globalEditor.code.match(gainRegex);
-                            if (match) {
-                                this.updateCode(this.globalEditor.code.replace(match[0], `//${match[0]}`)); 
+        // Create a slider for CPM or CPS
+        let cycleLabel;
+        if (this.globalEditor.code.match(`setcpm\\((.*)\\)`)) {
+            cycleLabel = 'cpm';
+        } else if (this.globalEditor.code.match(`setcps\\((.*)\\)`)) {
+            cycleLabel = 'cps';
+        }
+        
+        let cycleRegex = new RegExp(`set${cycleLabel}\\(([^*]+?)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
+        let cycleMatch = this.globalEditor.code.match(cycleRegex);
+        console.log(cycleMatch)
+        if (cycleMatch) {
+            controlDeckConfig.sliders.push({
+                    label: cycleLabel.toUpperCase(),
+                    disabled: true,
+                    vertical: true,
+                    onChange: (newValue) => {
+                        this.updateCode(this.globalEditor.code.replace(cycleRegex, 
+                            (match, value) => `set${cycleLabel}(${value} * ${newValue})`));
+                    },
+                    toggle: {
+                        bsPrefix: 'btn btn-danger glow-small',
+                        size: 'sm',
+                        onChange: (enabled, sliderValue) => {
+                            // Disabled code.
+                            if (!enabled) {
+                                this.updateCode(this.globalEditor.code.replace(cycleRegex, 
+                                    (match, value) => `set${cycleLabel}(${value} * ${sliderValue})`));
+                            } else {
+                                // Enable code.
+                                this.updateCode(this.globalEditor.code.replace(cycleRegex, 
+                                    (match, value) => `set${cycleLabel}(${value} * 1)`));
                             }
                         }
                     }
-                }
+                });
+        }
+
+        // Create dynamic slider configs.
+        TuneProcessor.sliders.map((slider) => {
+            let sliderRegx = new RegExp(`\\.${slider}\\((\\d*\\.?\\d+)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
+            let matches = [...this.globalEditor.code.matchAll(sliderRegx)];
+            if (matches.length) {
+                controlDeckConfig.sliders.push({
+                    label: slider.charAt(0).toUpperCase() + slider.slice(1),
+                    disabled: true,
+                    vertical: true,
+                    onChange: (newValue) => {
+                        this.updateCode(this.globalEditor.code.replaceAll(sliderRegx, 
+                            (match, value) => `.${slider}(${value} * ${newValue})`));
+                    },
+                    toggle: {
+                        bsPrefix: 'btn btn-danger glow-small',
+                        size: 'sm',
+                        onChange: (enabled, sliderValue) => {
+                            // Disabled code.
+                            if (!enabled) {
+                                this.updateCode(this.globalEditor.code.replaceAll(sliderRegx, 
+                                    (match, value) => `.${slider}(${value} * ${sliderValue})`));
+                            } else {
+                                // Enable code.
+                                this.updateCode(this.globalEditor.code.replaceAll(sliderRegx, 
+                                    (match, value) => `.${slider}(${value} * 1)`));
+                            }
+                        }
+                    }
+                });
             }
+            return {};
         })
   
         // Create sound toggle configs.
@@ -111,23 +125,18 @@ export default class TuneProcessor {
                 end: variable.end
             };
         });
+
+        TuneProcessor.configCounter++;
         return controlDeckConfig;
     }
 
     static preProcessString(input) {
-        TuneProcessor.sliders.forEach((slider) => {
-            if (!input.match(`all\\([\\s\\S]*.${slider}\\(\\d.*\\)`)) {
-                input = input.concat(`\n//all(x => x.${slider}(1))`);
-            }
-        });
-        // TuneProcessor.trackedExpressions.forEach((expression) => {
-        //     if (!input.match(`${expression}\\((.*)\\)`)) {
-        //         input = input.concat(`\n${expression}()`);
-        //     } else {
-        //         let match = input.match(`${expression}\\(.*\\)`);
-        //         input = input.slice(0, match.index) + input.slice(match[0].length) + `\n${match[0]}`
-        //     }
-        // });
+
+        // set a default CPS for slider, if not already present.
+        if (!input.match(`setcpm\\((.*)\\)`) && !input.match(`setcps\\((.*)\\)`)) {
+            input = input.concat('\nsetcpm(30)');
+        } 
+
         // Add logging for visualiser if needed
         if (!input.match(/all\(x => x.log\(\)\)/)) {
             input = input.concat('\nall(x => x.log())');
@@ -149,17 +158,6 @@ export default class TuneProcessor {
         
         let variableLookup = [];
         ast.body.forEach((node) => {
-            // Process controls such as: setcps, gain
-            if (node.type === 'ExpressionStatement') {
-                let callName = node.expression.callee.name;
-                if (TuneProcessor.trackedExpressions.includes(callName)) {
-                    let fullMatchedString = this.globalEditor.code.slice(node.start, node.end)
-                    let controlValue = fullMatchedString ? fullMatchedString.match(/\((.*?)\)/) : '';
-                    if (controlValue) {
-                        controlDeckObjects.controls.push({ label: callName, start: node.start, end: node.end, value: controlValue[1] });
-                    }
-                }
-            }
             // Labeled sounds.
             if (node.type === 'LabeledStatement') {
                 controlDeckObjects.sounds.push({ label: node.label.name, start: node.start, end: node.end})

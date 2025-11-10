@@ -1,5 +1,3 @@
-// import './App.scss';
-// import "bootstrap-icons/font/bootstrap-icons.css";
 import { useEffect, useState, useRef } from "react";
 import { StrudelMirror } from '@strudel/codemirror';
 import { evalScope } from '@strudel/core';
@@ -9,18 +7,10 @@ import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
 import TuneProcessor from './TuneProcessor';
-// import { stranger_tune, bergheini, finance, euclid } from './tunes';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
-import CheckBox from './components/CheckBox';
-import ButtonGroup from './components/ButtonGroup';
-import ToggleGroup from './components/ToggleGroup';
-import InputGroup from './components/InputGroup';
-import Slider from './components/Slider';
-import PostRenderElements from './components/PostRenderElements';
 import ControlDeck from './components/ControlDeck';
 import TuneFileManager from './TuneFileManager';
 import Visualiser from './components/Visualiser';
-import Modal from "./components/Modal";
 import Select from "./components/Select";
 import Input from "./components/Input";
 
@@ -95,11 +85,9 @@ export default function StrudelDemo() {
     };
 
     const save = async (event) => {
-        console.log(event)
         let updatedTunes = tunes;
         if (globalEditor.current && event.saveName) {
             updatedTunes[event.saveName] = globalEditor.current.code;
-            console.log(Object.keys(updatedTunes).at(-1))
             setTunes(updatedTunes);
             setTuneNames(Object.keys(updatedTunes));
             await TuneFileManager.saveTune(updatedTunes);
@@ -125,7 +113,6 @@ export default function StrudelDemo() {
     };
 
     const handleD3Data = (event) => {
-    // console.log(event.detail);
     let strudelData = getD3Data();
     let gainValues = [];
     strudelData.forEach((data) => { 
@@ -142,6 +129,7 @@ export default function StrudelDemo() {
     };
 
     const [controlConfig, setControlConfig] = useState({
+        configID: 'init',
         inputs: [],
         sounds: [],
         variables: [],
@@ -166,33 +154,39 @@ export default function StrudelDemo() {
 
     useEffect(() => {
         setNavButtons([
-            { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play },
-            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated },
-            { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop },
+            { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play, tooltip: 'Play' },
+            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated, tooltip: 'Update' },
+            { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop, tooltip: 'Stop' },
             // { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
             { type: 'modal', launchLabel: <i className="bi bi-download"></i>, buttonClass: 'btn btn-danger border border-secondary',
-                header: 'Save Track', body: <Input name='saveName' label='Please enter a save name:'/>, onSubmit: save },
+                header: 'Save Track', body: <Input name='saveName' label='Please enter a save name:'/>, onSubmit: save, tooltip: 'Save' },
             { type: 'modal', launchLabel: <i className="bi bi-upload"></i>, buttonClass: 'btn btn-danger border border-secondary',
-                header: 'Load Track', body: <Select name='trackName' options={tuneNames}/>, onSubmit: load }
+                header: 'Load Track', body: <Select name='trackName' options={tuneNames}/>, onSubmit: load, tooltip: 'Load' }
             // <Modal buttonClass='btn btn-danger border border-secondary' launchLabel={<i className="bi bi-upload"></i>}/>
         ]);
-    }, [tuneNames])
+    }, [tuneNames, codeUpdated])
 
     return (
         <div>
             <main>
-                <div className="app-wrapper container container-lg container-xl mx-auto">
-                    <div className="row mb-0 p-0">
-                        <div className="col-12 strudel-container p-0">
-                            <div id="editor" className='' />
-                            {/* <div id="output" /> */}
+                <div className="bg-dark m-0 p-0">
+                    <div className="row m-0 p-0">
+                        <div className="d-flex flex-column vh-100 p-2 col-12 col-md-7 col-xl-6 col-xxl-7 pe-0">
+                            <div class="flex-grow-0">
+                                <Visualiser data={strudelData}/>
+                            </div>
+                            <div className="strudel-container flex-grow-1 control-deck-inner m-2 p-0">
+                                <div id="editor" className='p-0 w-100 h-100' />
+                                <canvas id="roll" hidden></canvas>
+                                {/* <div id="output" /> */}
+                            </div>
+                        </div>
+                        <div className="col-12 col-md-5 col-xl-6 col-xxl-5 p-2 control-deck-wrapper ps-0">
+                        <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
                         </div>
                     </div>
-                    <div className="col-12 control-deck-wrapper">
-                        <ControlDeck config={controlConfig} visualiserData={strudelData} navButtons={navButtons} />
-                    </div>
                 </div>
-                <canvas id="roll"></canvas>
+                
             </main >
         </div >
     );

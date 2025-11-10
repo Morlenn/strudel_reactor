@@ -13,7 +13,7 @@ export default function Slider({ addClass = '', min = '0', max = '5', step = '0.
     const rangeOutput = (event) => {
 
         if (onChange) {
-            onChange(value ,event.target.value);
+            onChange(event.target.value);
         }
 
         setValue(event.target.value);
@@ -26,7 +26,7 @@ export default function Slider({ addClass = '', min = '0', max = '5', step = '0.
         setState(newState);
 
         if (toggle.onChange) {
-            toggle.onChange()
+            toggle.onChange(newState, value)
         }
     }
    
