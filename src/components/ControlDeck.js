@@ -27,11 +27,9 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
         <div className='control-deck bg-dark text-white col'>
             <div className='col-12 p-3 pt-2'>
                 <div className='row'>
-                    <div className='controls-container control-deck-inner d-flex justify-content-start flex-wrap text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
-                        {/* Inputs to be added post render */}
-                        <InputGroup inputs={controlConfig.inputs}/>
+                    <div className='controls-container control-deck-inner d-flex justify-content-center text-center mb-3 p-2 fs-6 text-uppercase fw-semibold'>
                         <ButtonGroup
-                            bsPrefix='btn-group btn-group-lg ms-2 my-2 m-0'
+                            bsPrefix='btn-group btn-group-lg flex-grow-2 w-75 m-1'
                             buttons={navButtons}
                         />
                     </div>
@@ -71,6 +69,10 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                             {controlConfig.sliders.map((slider) => {
                                 return <Slider 
                                             addClass='m-3 mx-5'
+                                            min='0'
+                                            max='2'
+                                            step='0.1'
+                                            defaultValue='1'
                                             label={slider.label}
                                             disabled={slider.disabled}
                                             vertical={slider.vertical}
