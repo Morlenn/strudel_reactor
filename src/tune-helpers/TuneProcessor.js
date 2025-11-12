@@ -1,18 +1,22 @@
 import { parse } from 'acorn';
 
-// TODO: Sort node processing so some nodes are process
+/**
+ * Handles pre-processing and processing of tracks.
+ * Generates ControlDeck configs for dynamic element generation.
+ */
 export default class TuneProcessor {
+    static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush']; // list of sliders the config can generate.
+    static configCounter = 0; // Used as a unique key.
 
-    // static trackedExpressions = [ 'setcps', 'setcpm' ];
-    static sliders = ['gain', 'distort', 'room', 'roomsize', 'delay', 'coarse', 'phaser', 'crush'];
-    static configCounter = 0;
-
+    /** initialise with globalEditor and updateCode function */
     static init(props) {
         this.globalEditor = props.globalEditor;
         this.updateCode = props.updateCode
     }
 
+    /** Builds a config object for ControlDeck component, based on results of strinf processing */
     static createControlDeckConfig() {
+        // Process track.
         let controlDeckObjects = TuneProcessor.processInputString(this.globalEditor.code);
         let controlDeckConfig = {
             configID: TuneProcessor.configCounter,
@@ -31,60 +35,75 @@ export default class TuneProcessor {
             cycleLabel = 'cps';
         }
         
+        // Find a match for setcpm/setcps.
         let cycleRegex = new RegExp(`set${cycleLabel}\\(([^*]+?)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
         let cycleMatch = this.globalEditor.code.match(cycleRegex);
+
         if (cycleMatch) {
+
+            // Create a slider config.
             controlDeckConfig.sliders.push({
                     label: cycleLabel.toUpperCase(),
                     disabled: true,
                     vertical: true,
                     onChange: (newValue) => {
+                        // Update to include new modifier.
                         this.updateCode(this.globalEditor.code.replace(cycleRegex, 
                             (match, value) => `set${cycleLabel}(${value} * ${newValue})`));
                     },
+
+                    // config for toggle button
                     toggle: {
                         bsPrefix: 'btn btn-danger glow-small',
                         size: 'sm',
                         onChange: (enabled, sliderValue) => {
-                            // Disabled code.
                             if (!enabled) {
+                                // update to append modifer: i.e: setcps(30 * 0.5)
                                 this.updateCode(this.globalEditor.code.replace(cycleRegex, 
                                     (match, value) => `set${cycleLabel}(${value} * ${sliderValue})`));
                             } else {
-                                // Enable code.
+                                // set to default value.
                                 this.updateCode(this.globalEditor.code.replace(cycleRegex, 
-                                    (match, value) => `set${cycleLabel}(${value} * 1)`));
+                                    (match, value) => `set${cycleLabel}(${value})`));
                             }
                         }
                     }
                 });
         }
 
-        // Create dynamic slider configs.
+        // Create dynamic slider configs based of sliders list.
         TuneProcessor.sliders.map((slider) => {
+
+            // Find a match for slider.
             let sliderRegx = new RegExp(`\\.${slider}\\((\\d*\\.?\\d+)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
             let matches = [...this.globalEditor.code.matchAll(sliderRegx)];
+            
             if (matches.length) {
+
+                // Create a slider config.
                 controlDeckConfig.sliders.push({
                     label: slider.charAt(0).toUpperCase() + slider.slice(1),
                     disabled: true,
                     vertical: true,
                     onChange: (newValue) => {
+                        // Update to include new modifier.
                         this.updateCode(this.globalEditor.code.replaceAll(sliderRegx, 
                             (match, value) => `.${slider}(${value} * ${newValue})`));
                     },
+
+                    // config for toggle button
                     toggle: {
                         bsPrefix: 'btn btn-danger glow-small',
                         size: 'sm',
                         onChange: (enabled, sliderValue) => {
-                            // Disabled code.
                             if (!enabled) {
+                                // update to append modifer: i.e: gain(0.6 * 0.5)
                                 this.updateCode(this.globalEditor.code.replaceAll(sliderRegx, 
                                     (match, value) => `.${slider}(${value} * ${sliderValue})`));
                             } else {
-                                // Enable code.
+                                // set to default value.
                                 this.updateCode(this.globalEditor.code.replaceAll(sliderRegx, 
-                                    (match, value) => `.${slider}(${value} * 1)`));
+                                    (match, value) => `.${slider}(${value})`));
                             }
                         }
                     }
@@ -93,7 +112,7 @@ export default class TuneProcessor {
             return {};
         })
   
-        // Create sound toggle configs.
+        // Create sound toggle button configs.
         controlDeckConfig.sounds = controlDeckObjects.sounds.map((sound) => {
                 return {
                             label: sound.label,
@@ -129,6 +148,11 @@ export default class TuneProcessor {
         return controlDeckConfig;
     }
 
+    /**
+     * Removes leading white space and appends CPS and logging functions if required.
+     * @param {string} input passed track
+     * @returns 
+     */
     static preProcessString(input) {
         
         // set a default CPS for slider, if not already present.
@@ -149,13 +173,16 @@ export default class TuneProcessor {
             variables: [],
             controls: []
         }
+        let variableLookup = [];
+
         // Code 'insperation' gained from: https://codeberg.org/uzu/strudel/src/branch/main/packages/transpiler/transpiler.mjs
+        // Parses track and builds nodes in a tree sructure to manipulate.
         const ast = parse(input, {
             ecmaVersion: 'latest',
             locations: true 
         })
         
-        let variableLookup = [];
+        
         ast.body.forEach((node) => {
             // Labeled sounds.
             if (node.type === 'LabeledStatement') {
@@ -170,6 +197,7 @@ export default class TuneProcessor {
         });
 
         // Attempt to find declared variables and what they control.
+        // i.e: match pattern with gain_patterns array.
         variableLookup.forEach((node) => {
             let variableName = node.declarations[0].id.name;
             // Attempt to find matching pick array.

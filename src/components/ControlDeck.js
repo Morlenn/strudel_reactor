@@ -4,7 +4,14 @@ import ToggleButton from './buttons/ToggleButton';
 import ButtonGroup from './buttons/ButtonGroup';
 import { useState, useEffect } from 'react';
 
-
+/**
+ * Contains all the elements that manipulate a track.
+ * Transforms a config object into useable elements such as buttons and sliders.  
+ * 
+ * @param {Object} props - Component props.
+ * @param {Object} [props.config={}] - Confiration object that contains arrays for sounds, variables and sliders.
+ * @param {string} [props.naveButtons=[]] - Array of button configs for navigation buttons.
+ */
 export default function ControlDeck({ config = {}, navButtons = [] }) {
 
     const [controlConfig, setControlConfig] = useState(config);
@@ -31,7 +38,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                         />
                     </div>
                     <div className='row row-cols-3 row-cols-lg-4 row-cols-xl-5 mt-1 mb-0 ps-2 ms-1'>
-                            {/* Sound buttons to be added post render */}
+                            {/* Hush buttons */}
                             {controlConfig.sounds.map((sound, index) => {
                                 return <div className='col mb-5' key={`${controlConfig.configID}-toggle-button-${index}`}>
                                             <ToggleButton
@@ -46,7 +53,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                             })}
                     </div>
                     <div className='row row-cols-1 mb-5'>
-                            {/* Variable toggles to be added post render */}
+                            {/* Toggle groups to control patterns */}
                             <div className="btn-toolbar toggle-group col gap-4">
                                 {controlConfig.variables.map((variable, index) => {
                                 return <ToggleGroup
@@ -63,7 +70,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                     </div>
                     <div className='col-12'>
                         <div className='slider-container control-deck-inner d-flex justify-content-center flex-wrap pb-3'>
-                            {/* Slider to control global gain, with disable toggle. */}
+                            {/* Slider to control specified effects, with disable toggle. */}
                             {controlConfig.sliders.map((slider, index) => {
                                 return <Slider 
                                             key={`${controlConfig.configID}-slider-${index}`}

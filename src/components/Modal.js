@@ -4,6 +4,17 @@ import { Form, Button } from 'react-bootstrap';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 
+/**
+ * Wrapper for a Bootstrap modal component with a launch button.
+ *
+ * @param {Object} props - Component props.
+ * @param {string} [props.buttonClass=''] - CSS classes applied to the launch button.
+ * @param {string} [props.launchLabel=''] - Text displayed on the button that launches the modal.
+ * @param {string} [props.header=''] - Header text of the modal.
+ * @param {string} [props.body=''] - Body content of the modal.
+ * @param {string} [props.tooltip=''] - Tooltip text for the launch button.
+ * @param {Function} [props.onSubmit=()=>{}] - Callback fired when the modal's submit action is triggered.
+ */
 export default function Modal({ buttonClass = '', launchLabel = '', header = '', body = '', tooltip = '', onSubmit = () => {} }) {
 
     const [show, setShow] = useState(false);
@@ -11,6 +22,7 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    /** Closes and the modal and passes FormData to callback. */
     const handleSubmit = (event) => {
         event.preventDefault();
         let form = new FormData(event.target)
@@ -21,6 +33,7 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
         handleClose();
     }
 
+    // Button without tooltip.
     if (!tooltip) {
             return (
                 <>
@@ -51,6 +64,8 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
                 </>
             )
         }
+
+        // Button with tooltip.
         return (
                 <>
                     <OverlayTrigger
@@ -88,20 +103,3 @@ export default function Modal({ buttonClass = '', launchLabel = '', header = '',
                 </> 
         );
 }
-
-// function App() {
-//   const [modalShow, setModalShow] = useState(false);
-
-//   return (
-//     <>
-//       <Button variant="primary" onClick={() => setModalShow(true)}>
-//         Launch vertically centered modal
-//       </Button>
-
-//       <MyVerticallyCenteredModal
-//         show={modalShow}
-//         onHide={() => setModalShow(false)}
-//       />
-//     </>
-//   );
-// }

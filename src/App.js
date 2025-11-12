@@ -16,15 +16,20 @@ import Input from "./components/form-elements/Input";
 
 export default function StrudelDemo() {
 
-    const [codeUpdated, setCodeUpdated] = useState(false);
-    const [strudelData, setStrudelData] = useState([]);
-    const [navButtons, setNavButtons] = useState([]);
-    const [tunes, setTunes] = useState(undefined);
-    const [tuneNames, setTuneNames] = useState([]);
+    const [codeUpdated, setCodeUpdated] = useState(false); // enbaled / disable refresh button
+    const [strudelData, setStrudelData] = useState([]); // gain values for Visuliser D3 graph
+    const [navButtons, setNavButtons] = useState([]); // Navbar button config.
+    const [tunes, setTunes] = useState(undefined); // object with loaded tunes
+    const [tuneNames, setTuneNames] = useState([]); // tune names for populating select list
     const globalEditor = useRef(null);
     const hasRun = useRef(false);
 
+    /**
+     * Preprocess track, initialise strudel and create config to pass to ControlDeck component.
+     * @param {*} selectedTrack default track.
+     */
     const strudelInit = (selectedTrack) => {
+        // preprocess track to add any missing elements (i.e. logging)
         let inputCode = TuneProcessor.preProcessString(selectedTrack);
         document.addEventListener("d3Data", handleD3Data);
         console_monkey_patch();
@@ -41,8 +46,7 @@ export default function StrudelDemo() {
             getTime: () => getAudioContext().currentTime,
             transpiler,
             root: document.getElementById('editor'),
-            // TODO: Change tune by selection.
-            initialCode: inputCode,
+            initialCode: inputCode, // set default song
             drawTime,
             onDraw: (haps, time) => drawPianoroll({ haps, time, ctx: drawContext, drawTime, fold: 0 }),
             prebake: async () => {
@@ -58,61 +62,65 @@ export default function StrudelDemo() {
             },
         });
 
+        // Initialise TuneProcessor and generate config to pass to ControlDeck component.
         TuneProcessor.init({ globalEditor: globalEditor.current, updateCode: updateCode });
         setControlConfig(TuneProcessor.createControlDeckConfig());
         setCodeUpdated(false); // Disable refresh on init.
     };
 
+    /** Play current track */
     const play = () => {
         if (globalEditor.current) {
-            // Turn off refresh flag if required.
-            if (codeUpdated) { setCodeUpdated(false); }
+            if (codeUpdated) { setCodeUpdated(false); } // Turn off refresh flag if required.
             globalEditor.current.evaluate();
         }
     };
 
-    const refresh = () => {
-        if (globalEditor.current && codeUpdated) {
-            globalEditor.current.evaluate();
-            setCodeUpdated(false);
-        }
-    };
-
+    /** Stop current track */
     const stop = () => {
         if (globalEditor.current) {
             globalEditor.current.stop();
         }
     };
 
-    const save = async (event) => {
+    /**
+     * Saves current track and writes to saved-tunes.json
+     * @param {*} formData form data from modal component.
+     */
+    const save = async (formData) => {
         let updatedTunes = tunes;
-        if (globalEditor.current && event.saveName) {
-            updatedTunes[event.saveName] = globalEditor.current.code;
+        if (globalEditor.current && formData.saveName) {
+            updatedTunes[formData.saveName] = globalEditor.current.code;
             setTunes(updatedTunes);
             setTuneNames(Object.keys(updatedTunes));
             await TuneFileManager.saveTune(updatedTunes);
         }
     };
 
-    const load = (event) => {
-        let track = tunes[event.trackName];
+    /**
+     * Loads selected track name and generates a ControlDeck config for it.
+     * @param {*} formData form data from modal component
+     */
+    const load = (formData) => {
+        let track = tunes[formData.trackName];
         if (globalEditor.current && track) {
             globalEditor.current.stop();
-            track = TuneProcessor.preProcessString(track); // ensure control functions appended
+            track = TuneProcessor.preProcessString(track); // ensure logging appended
             globalEditor.current.setCode(track);
             setControlConfig(TuneProcessor.createControlDeckConfig());
         }
     };
 
+    /** Set passed string in globalEditor */
     const updateCode = (updatedCode) => {
-        // updatedCode = TuneProcessor.preProcessString(updatedCode);
         if (updatedCode) {
             globalEditor.current.setCode(updatedCode);
             setCodeUpdated(true);
         }
     };
 
-    const handleD3Data = (event) => {
+    /** Extracts gain values from strudel logs and sets as strudelData */
+    const handleD3Data = () => {
     let strudelData = getD3Data();
     let gainValues = [];
     strudelData.forEach((data) => { 
@@ -128,6 +136,7 @@ export default function StrudelDemo() {
     setStrudelData(gainValues);
     };
 
+    // Control Config control, with init object.
     const [controlConfig, setControlConfig] = useState({
         configID: 'init',
         inputs: [],
@@ -138,7 +147,7 @@ export default function StrudelDemo() {
         globalEditor: globalEditor
     });
 
-    // Load in tunes then strudel
+    // Load in tunes then intialise strudel.
     useEffect(() => {
         TuneFileManager.init()
             .then(() => {
@@ -152,17 +161,16 @@ export default function StrudelDemo() {
             })
     }, [])
 
+    // Update navbar config when required.
     useEffect(() => {
         setNavButtons([
             { label: <i className="bi bi-play-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play, tooltip: 'Play' },
-            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: refresh, disabled: !codeUpdated, tooltip: 'Update' },
+            { label: <i className="bi bi-arrow-clockwise"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: play, disabled: !codeUpdated, tooltip: 'Update' },
             { label: <i className="bi bi-stop-fill"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: stop, tooltip: 'Stop' },
-            // { label: <i className="bi bi-download"></i>, bsPrefix: 'btn btn-danger border border-secondary', onClick: save },
             { type: 'modal', launchLabel: <i className="bi bi-download"></i>, buttonClass: 'btn btn-danger border border-secondary',
                 header: 'Save Track', body: <Input name='saveName' label='Please enter a save name:'/>, onSubmit: save, tooltip: 'Save' },
             { type: 'modal', launchLabel: <i className="bi bi-upload"></i>, buttonClass: 'btn btn-danger border border-secondary',
                 header: 'Load Track', body: <Select name='trackName' options={tuneNames}/>, onSubmit: load, tooltip: 'Load' }
-            // <Modal buttonClass='btn btn-danger border border-secondary' launchLabel={<i className="bi bi-upload"></i>}/>
         ]);
     }, [tuneNames, codeUpdated])
 
@@ -178,7 +186,6 @@ export default function StrudelDemo() {
                             <div className="strudel-container flex-grow-1 control-deck-inner m-2 p-0">
                                 <div id="editor" className='p-0 w-100 h-100' />
                                 <canvas id="roll" hidden></canvas>
-                                {/* <div id="output" /> */}
                             </div>
                         </div>
                         <div className="col-12 col-md-5 col-xl-6 col-xxl-5 p-2 control-deck-wrapper ps-0">

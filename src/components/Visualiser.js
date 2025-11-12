@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import * as d3 from 'd3';
 
+/**
+ * Builds and displays a scrolling line chart from passed data.
+ * 
+ * @param {Object} props
+ * @param {Array} [props.data=[]] data to build D3 graph.
+ */
 export default function Visualiser({ data = [] }) {
     const [strudelData, setStrudelData] = useState(data);
     const maxValue = 1;
