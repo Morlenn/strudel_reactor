@@ -17,7 +17,6 @@ import Tooltip from 'react-bootstrap/Tooltip';
  * @param {boolean} [props.active=false] - Whether the button is in active state
  * @param {boolean} [props.wrapLabel=false] - Wraps label within span element if true.
  * @param {string} [props.tooltip=''] - Tooltip text to display on hover
- * @returns {JSX.Element} Rendered button component
  */
 export default function Button({ bsPrefix = 'btn', id = '', variant = 'primary', size = '', disabled = false, label = '', 
     onClick = () => {}, type = 'button', active = false, wrapLabel = false, tooltip = '' }) {

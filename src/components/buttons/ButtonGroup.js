@@ -11,10 +11,6 @@ import { useId } from 'react';
  * @param {string} [props.size=''] - Optional size modifier ('sm', 'lg', etc.) for the button group
  * @param {boolean} [props.vertical=false] - If true, displays buttons in a vertical layout instead of horizontal
  * @param {Array} [props.buttons=[]] - Array of button components configs to render within the group
- * 
- * @returns {JSX.Element} A button group container with the specified buttons
- * 
- * @returns 
  */
 export default function ButtonGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = []}) {
     const id = useId();
