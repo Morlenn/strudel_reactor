@@ -1,9 +1,12 @@
-// TODO: Handle JSON save/load.. no idea why the fetch isn't working..
+/**
+ * Handles the saving and loading of tunes from saved-tunes.json.
+ */
 export default class TuneFileManager {
 
     static savedTunesLocation = '/saved-tunes.json '
     static tunes = {};
 
+    /** Loads in tracks */
     static async init() {
         return await fetch('http://localhost:5000/load-tunes')
             .then((res) => res.json())
@@ -16,6 +19,7 @@ export default class TuneFileManager {
         return this.tunes;
     };
 
+    /** Updates tunes and writes to saved-tune.json */
     static async saveTune(updatedTunes) {
         if (updatedTunes) {
             this.tunes = updatedTunes;
