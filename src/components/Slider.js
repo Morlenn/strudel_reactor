@@ -1,6 +1,6 @@
 
 import Form from 'react-bootstrap/Form';
-import ToggleButton from './ToggleButton';
+import ToggleButton from './buttons/ToggleButton';
 import { useState } from 'react';
 
 export default function Slider({ addClass = '', min = '0', max = '5', step = '0.5', defaultValue = '1', vertical = false, label = '', disabled = false, toggle = {}, onChange = () => {}}) {

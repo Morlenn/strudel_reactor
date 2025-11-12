@@ -1,6 +1,6 @@
 import BSButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from './Button';
-import Modal from './Modal';
+import Modal from '../Modal';
 import { useId } from 'react';
 
 export default function ButtonGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = []}) {

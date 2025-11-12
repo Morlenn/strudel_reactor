@@ -1,7 +1,7 @@
 import Slider from './Slider';
-import ToggleGroup from './ToggleGroup';
-import ToggleButton from './ToggleButton';
-import ButtonGroup from './ButtonGroup';
+import ToggleGroup from './buttons/ToggleGroup';
+import ToggleButton from './buttons/ToggleButton';
+import ButtonGroup from './buttons/ButtonGroup';
 import { useState, useEffect } from 'react';
 
 

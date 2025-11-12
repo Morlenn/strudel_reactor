@@ -1,4 +1,4 @@
-import Input from './Input';
+import Input from './form-elements/Input';
 import { useId, useState, useEffect } from 'react';
 
 export default function InputGroup({ bsPrefix = 'input-group', size = 'size', inputs = [] }) {

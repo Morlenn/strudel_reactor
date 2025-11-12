@@ -6,13 +6,13 @@ import { initAudioOnFirstClick } from '@strudel/webaudio';
 import { transpiler } from '@strudel/transpiler';
 import { getAudioContext, webaudioOutput, registerSynthSounds } from '@strudel/webaudio';
 import { registerSoundfonts } from '@strudel/soundfonts';
-import TuneProcessor from './TuneProcessor';
+import TuneProcessor from './tune-helpers/TuneProcessor';
 import console_monkey_patch, { getD3Data } from './console-monkey-patch';
 import ControlDeck from './components/ControlDeck';
-import TuneFileManager from './TuneFileManager';
+import TuneFileManager from './tune-helpers/TuneFileManager';
 import Visualiser from './components/Visualiser';
-import Select from "./components/Select";
-import Input from "./components/Input";
+import Select from "./components/form-elements/Select";
+import Input from "./components/form-elements/Input";
 
 export default function StrudelDemo() {
 
