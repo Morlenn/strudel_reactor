@@ -1,5 +1,3 @@
-import Form from 'react-bootstrap/Form';
-import { useState } from 'react';
 
 /**
  * Intended to be used as inner element of checkbox and radio button groups.

@@ -172,7 +172,7 @@ export default function StrudelDemo() {
                 <div className="bg-dark m-0 p-0">
                     <div className="row m-0 p-0">
                         <div className="d-flex flex-column vh-100 p-2 col-12 col-md-7 col-xl-6 col-xxl-7 pe-0">
-                            <div class="flex-grow-0">
+                            <div className="flex-grow-0">
                                 <Visualiser data={strudelData}/>
                             </div>
                             <div className="strudel-container flex-grow-1 control-deck-inner m-2 p-0">

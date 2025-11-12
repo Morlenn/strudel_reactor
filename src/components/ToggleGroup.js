@@ -1,8 +1,5 @@
 import BSButtonGroup from 'react-bootstrap/ButtonGroup'
-import Form from 'react-bootstrap/Form';
-import RadioButton from './RadioButton';
-import ToggleButton from './ToggleButton';
-import ToggleGroupButton from './ToggleGroupButton';
+import Button from './Button';
 import { useState, useId } from 'react';
 
 export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertical = false, buttons = [], label = '', onChange = () => {}}) {
@@ -27,7 +24,8 @@ export default function ToggleGroup({ bsPrefix = 'btn-group', size = '', vertica
                 >
                 {buttons.map((props, index) => {
 
-                    return <ToggleGroupButton
+                    return <Button
+                                bsPrefix='toggle-group-button hush-button'
                                 key={`toggle-${props.label}-${index}`}
                                 id={`${props.label}-button-${index+1}`}
                                 value={index}

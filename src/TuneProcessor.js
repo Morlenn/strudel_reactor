@@ -33,7 +33,6 @@ export default class TuneProcessor {
         
         let cycleRegex = new RegExp(`set${cycleLabel}\\(([^*]+?)(?: *\\* *\\d*\\.?\\d+)?\\)`, 'g');
         let cycleMatch = this.globalEditor.code.match(cycleRegex);
-        console.log(cycleMatch)
         if (cycleMatch) {
             controlDeckConfig.sliders.push({
                     label: cycleLabel.toUpperCase(),
@@ -131,7 +130,7 @@ export default class TuneProcessor {
     }
 
     static preProcessString(input) {
-
+        
         // set a default CPS for slider, if not already present.
         if (!input.match(`setcpm\\((.*)\\)`) && !input.match(`setcps\\((.*)\\)`)) {
             input = input.concat('\nsetcpm(30)');
@@ -160,6 +159,7 @@ export default class TuneProcessor {
         ast.body.forEach((node) => {
             // Labeled sounds.
             if (node.type === 'LabeledStatement') {
+                console.log(node)
                 controlDeckObjects.sounds.push({ label: node.label.name, start: node.start, end: node.end})
             }
             // Tracked variables.

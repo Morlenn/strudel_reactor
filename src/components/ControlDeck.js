@@ -1,11 +1,7 @@
-import CheckBox from './CheckBox';
-import InputGroup from './InputGroup';
 import Slider from './Slider';
 import ToggleGroup from './ToggleGroup';
 import ToggleButton from './ToggleButton';
-import Visualiser from './Visualiser';
 import ButtonGroup from './ButtonGroup';
-import Modal from './Modal';
 import { useState, useEffect } from 'react';
 
 
