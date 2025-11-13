@@ -102,6 +102,22 @@ Savinging doesn't currently check for tracks that are keyed by your passed saved
 ### server.js
 I've written a short, janky express 'backend' to handle the saving and loading of JSON data. I wanted to simulate a backend/client relationship, and misunderstood the need for JSON maniputlation in the assignment. I later found out all that was required was use a object in local storage.
 
+## Video Demo
+You can access my video demo via sharepoint [here](https://mymailunisaedu-my.sharepoint.com/:v:/g/personal/twedy001_mymail_unisa_edu_au/IQBu4kHem9S3SYp_Ek_U_4d_AV4jTPAbZ46sGfJms8TRbZw?e=43U67S).
+
+If you have any issues accessing, please let me know.
+
+*Note: You may need to manually set to video quality to 1080p - I've had mixed results with the auto setting.*
+
+## GIGA HD
+I'd like to try my hand at claiming some extra points for my video. While I can't claim it's a high budget affair, I've done my best to make it enagaging as a man with zero musical talent.
+
+I'd normally record these through Microsoft Teams, but went to the extra effort to get myself inframe with the video through OBS, while removing the background.
+
+I also tried to keep it on theme with Mark's delievery of the Web Tech videos, although I did break form a bit by not recording at 1am (my family would kill me).
+
+Honestly, it's not much but I figured it may be worth a few points.
+
 ## Strudel Bakery Content
 All tracks used in the assignment were sourced from the strudel bakery, as I have zero musical talent.
 
