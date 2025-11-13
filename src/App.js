@@ -94,6 +94,11 @@ export default function StrudelDemo() {
             setTunes(updatedTunes);
             setTuneNames(Object.keys(updatedTunes));
             await TuneFileManager.saveTune(updatedTunes);
+
+            // Refresh ControlConfig to reflect any changes to controls
+            let track = TuneProcessor.preProcessString(tunes[formData.saveName]); // ensure logging appended
+            globalEditor.current.setCode(track);
+            setControlConfig(TuneProcessor.createControlDeckConfig());
         }
     };
 

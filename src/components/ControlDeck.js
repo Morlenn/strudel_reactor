@@ -77,7 +77,7 @@ export default function ControlDeck({ config = {}, navButtons = [] }) {
                                             addClass='m-3 mx-5'
                                             min='0'
                                             max='2'
-                                            step='0.1'
+                                            step='0.05'
                                             defaultValue='1'
                                             label={slider.label}
                                             disabled={slider.disabled}
